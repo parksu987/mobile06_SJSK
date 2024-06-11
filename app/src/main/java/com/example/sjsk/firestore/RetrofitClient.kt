@@ -13,10 +13,12 @@ import retrofit2.converter.simplexml.SimpleXmlConverterFactory
 object RetrofitClient {
     private const val BASE_URL = "https://apis.data.go.kr/1471000/FoodNtrCpntDbInfo/" // API의 기본 URL
 
-    private val loggingInterceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+    val logging = HttpLoggingInterceptor().apply {
+        level = HttpLoggingInterceptor.Level.BODY
+    }
 
-    private val okHttpClient = OkHttpClient.Builder()
-        .addInterceptor(loggingInterceptor)
+    val client = OkHttpClient.Builder()
+        .addInterceptor(logging)
         .build()
 
     // Gson 인스턴스에 Lenient 모드를 활성화
@@ -27,7 +29,7 @@ object RetrofitClient {
     val instance: ApiService by lazy {
         Retrofit.Builder()
             .baseUrl(BASE_URL)
-            .client(okHttpClient) ////
+            .client(client) ////
             .addConverterFactory(SimpleXmlConverterFactory.create())
             .build()
             .create(ApiService::class.java)

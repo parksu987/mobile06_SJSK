@@ -14,18 +14,21 @@ import java.io.InputStream
 
 @Root(name = "response", strict = false)
 data class ApiResponse(
-//    @SerializedName("Header")
-//    val header: String,
+    @field:Element(name = "header", required = false)
+    var header: Header? = null,
+
     @field:Element(name = "body", required = false)
     var body: Body? = null
 )
 
-//data class Header(
-//    @SerializedName("Body")
-//    val resultCode: String,
-//    @SerializedName("Body")
-//    val resultMsg: String
-//)
+@Root(name = "header", strict = false)
+data class Header(
+    @field:Element(name = "resultCode", required = false)
+    var resultCode: String? = null,
+
+    @field:Element(name = "resultMsg", required = false)
+    var resultMsg: String? = null
+)
 
 @Root(name = "body", strict = false)
 data class Body(
@@ -38,8 +41,14 @@ data class Body(
     @field:Element(name = "totalCount", required = false)
     var totalCount: String? = null,
 
-    @field:ElementList(name = "items", required = false, inline = true)
-    var items: List<Item>? = null
+    @field:ElementList(entry = "items", required = false, inline = true)
+    var items: ArrayList<Items>? = null
+)
+
+@Root(name = "items", strict = false)
+data class Items(
+    @field:ElementList(entry = "item", required = false, inline = true)
+    var item: ArrayList<Item>? = null
 )
 
 @Root(name = "item", strict = false)
@@ -108,100 +117,3 @@ data class Item(
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//
-//fun readExcelFile(inputStream: InputStream): List<NutritionInfo> {
-//    val nutritionInfoList = mutableListOf<NutritionInfo>()
-//    val logTag = "ExcelReader"
-//
-//    try {
-//        val workbook = WorkbookFactory.create(inputStream) as XSSFWorkbook
-//        val sheet = workbook.getSheetAt(0)
-//
-//        for (row in sheet) {
-//            if (row.rowNum == 0) continue // 첫 번째 행은 헤더이므로 건너뜀
-//
-//            val tlrvnazhem_A = row.getCell(0)?.toString() ?: ""
-//            val vnaahrwpwhqhrhqjsgh_B = row.getCell(1)?.toString() ?: ""
-//            val tlrvnaaud_C = row.getCell(2)?.toString() ?: ""
-//            val tlrvnarldnjsaud_G = row.getCell(6)?.toString() ?: ""
-//            val eovytlrvnaaud_K = row.getCell(10)?.toString() ?: ""
-//            val tlrvnathqnsfbaud_O = row.getCell(14)?.toString() ?: ""
-//            val duddidtjdqnsgkafidrlwnsfid_R = row.getCell(17)?.toString() ?: ""
-//            val dpsjwl_S = row.getCell(18)?.toString() ?: ""
-//            val eksqorwlf_U = row.getCell(20)?.toString() ?: ""
-//            val wlqkd_V = row.getCell(21)?.toString() ?: ""
-//            val xkstnghkanf_X = row.getCell(23)?.toString() ?: ""
-//            val ekdfb_Y = row.getCell(24)?.toString() ?: ""
-//            val skxmfba_AE = row.getCell(30)?.toString() ?: ""
-//            val zhffptmxpfhf_AN = row.getCell(39)?.toString() ?: ""
-//            val vhghkwlqkdtks_AO = row.getCell(40)?.toString() ?: ""
-//            val dlfghltjqcnlckarhfid_EV = row.getCell(151)?.toString() ?: ""
-//            val tlrvnawndfid_EW = row.getCell(152)?.toString() ?: ""
-//            val wpwhtkaud_EX = row.getCell(153)?.toString() ?: ""
-//            val epdlxjrlwnsdlfwk_FG = row.getCell(162)?.toString() ?: ""
-//
-//            // 로그 출력
-//            Log.d(logTag, "Row ${row.rowNum}: vnaahrwpwhqhrhqjsgh_B=$vnaahrwpwhqhrhqjsgh_B, tlrvnaaud_C=$tlrvnaaud_C, tlrvnarldnjsaud_G=$tlrvnarldnjsaud_G, eovytlrvnaaud_K=$eovytlrvnaaud_K, tlrvnathqnsfbaud_O=$tlrvnathqnsfbaud_O, duddidtjdqnsgkafidrlwnsfid_R=$duddidtjdqnsgkafidrlwnsfid_R, dpsjwl_S=$dpsjwl_S, eksqorwlf_U=$eksqorwlf_U, wlqkd_V=$wlqkd_V, xkstnghkanf_X=$xkstnghkanf_X, ekdfb_Y=$ekdfb_Y, skxmfba_AE=$skxmfba_AE, zhffptmxpfhf_AN=$zhffptmxpfhf_AN, vhghkwlqkdtks_AO=$vhghkwlqkdtks_AO, dlfghltjqcnlckarhfid_EV=$dlfghltjqcnlckarhfid_EV, tlrvnawndfid_EW=$tlrvnawndfid_EW, wpwhtkaud_EX=$wpwhtkaud_EX, epdlxjrlwnsdlfwk_FG=$epdlxjrlwnsdlfwk_FG")
-//
-//            nutritionInfoList.add(
-//                NutritionInfo(
-//                    vnaahrwpwhqhrhqjsgh_B,
-//                    tlrvnaaud_C,
-//                    tlrvnarldnjsaud_G,
-//                    eovytlrvnaaud_K,
-//                    tlrvnathqnsfbaud_O,
-//                    duddidtjdqnsgkafidrlwnsfid_R,
-//                    dpsjwl_S,
-//                    eksqorwlf_U,
-//                    wlqkd_V,
-//                    xkstnghkanf_X,
-//                    ekdfb_Y,
-//                    skxmfba_AE,
-//                    zhffptmxpfhf_AN,
-//                    vhghkwlqkdtks_AO,
-//                    dlfghltjqcnlckarhfid_EV,
-//                    tlrvnawndfid_EW,
-//                    wpwhtkaud_EX,
-//                    epdlxjrlwnsdlfwk_FG
-//                )
-//            )
-//        }
-//
-//        workbook.close()
-//    } catch (e: OutOfMemoryError) {
-//        Log.e(logTag, "Out of Memory Error while reading the Excel file", e)
-//    } catch (e: Exception) {
-//        Log.e(logTag, "Exception while reading the Excel file", e)
-//    }
-//
-//    return nutritionInfoList
-//}
