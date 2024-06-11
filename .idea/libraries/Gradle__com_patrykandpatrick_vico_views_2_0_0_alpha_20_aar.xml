@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="Gradle: com.patrykandpatrick.vico:views:2.0.0-alpha.20@aar">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/02e0f4dffc50dd129ec6c6d7036e8299/transformed/views-2.0.0-alpha.20/AndroidManifest.xml" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/02e0f4dffc50dd129ec6c6d7036e8299/transformed/views-2.0.0-alpha.20/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/02e0f4dffc50dd129ec6c6d7036e8299/transformed/views-2.0.0-alpha.20/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.patrykandpatrick.vico/views/2.0.0-alpha.20/22497ef1178fb3e16afbaef7c40dab0a9d33941b/views-2.0.0-alpha.20-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.patrykandpatrick.vico/views/2.0.0-alpha.20/70d8541fa4dc1bdb93a91d689d9af90cb88e087d/views-2.0.0-alpha.20-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
