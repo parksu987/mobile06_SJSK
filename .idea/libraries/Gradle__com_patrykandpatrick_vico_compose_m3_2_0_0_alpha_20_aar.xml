@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="Gradle: com.patrykandpatrick.vico:compose-m3:2.0.0-alpha.20@aar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/1971bed9d477c5aa6663b0134e610a64/transformed/compose-m3-2.0.0-alpha.20/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/1971bed9d477c5aa6663b0134e610a64/transformed/compose-m3-2.0.0-alpha.20/AndroidManifest.xml" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.patrykandpatrick.vico/compose-m3/2.0.0-alpha.20/ea8940b1a78dd863da82a0b364ad7240100549a8/compose-m3-2.0.0-alpha.20-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.patrykandpatrick.vico/compose-m3/2.0.0-alpha.20/1248166291f1c085de5276fdf590662101ae550f/compose-m3-2.0.0-alpha.20-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
