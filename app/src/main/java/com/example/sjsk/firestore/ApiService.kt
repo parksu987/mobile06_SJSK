@@ -28,17 +28,3 @@ interface ApiService {
 //        return apiService.getData(foodName = encodedFoodName)
 //    }
 //}
-
-
-
-//
-//class Repository(private val apiService: ApiService) {
-//    suspend fun fetchFoodData(foodName: String): Response<ApiResponse> {
-//        val encodedFoodName = encodeValue(foodName)
-//        return apiService.getData(foodName = encodedFoodName).execute()
-//    }
-//}
-//
-//fun encodeValue(value: String): String {
-//    return URLEncoder.encode(value, StandardCharsets.UTF_8.toString())
-//}
