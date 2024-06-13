@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -36,6 +37,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -105,9 +107,11 @@ fun MyAppScreen(viewModel: SearchViewModel) {
         val data by viewModel.data.collectAsState()
 
         if (data != null) {
-            DataDisplay(data = data!!, searchText)
-            Spacer(modifier = Modifier.height(8.dp))
-            PageIndicator(viewModel)
+            Column {
+                DataDisplay(data = data!!, searchText)
+                Spacer(modifier = Modifier.height(8.dp))
+                PageIndicator(viewModel)
+            }
         } else {
             Text("No items available")
         }
@@ -121,23 +125,40 @@ fun DataDisplay(data: ApiResponse, searchText: String) {
     if (data.body?.items?.isNotEmpty() == true) {  // 데이터가 있을 때
         Column {
             Text("\"$searchText\"에 대한 검색 결과입니다.", modifier = Modifier.fillMaxWidth(), fontSize = 20.sp, textAlign = TextAlign.Center)
+
             Spacer(modifier = Modifier.height(30.dp))
 
             HeaderBar()
 
             data.body?.items?.forEach { items ->
                 items.item?.forEachIndexed { index, item ->
-                    Row {
-                        Text(text = "${data.body?.pageNo?.toInt()?.minus(1)?.times(10)?.plus(index+1)}", modifier = Modifier.weight(1f))
-                        Text(text = "${item.FOOD_NM_KR}", modifier = Modifier.weight(3f))
-                        Text(text = "${item.AMT_NUM1}", modifier = Modifier.weight(2f))
-                        Button(
+                    Row (
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ){
+                        Text(text = "${data.body?.pageNo?.toInt()?.minus(1)?.times(10)?.plus(index+1)}",
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(start = 10.dp)
+                                .align(Alignment.CenterVertically))
+                        Text(text = "${item.FOOD_NM_KR?.split("_")?.get(1)}",
+                            modifier = Modifier
+                                .weight(4f)
+                                .align(Alignment.CenterVertically))
+                        Text(text = "${item.AMT_NUM1}",
+                            modifier = Modifier
+                                .weight(1f)
+                                .align(Alignment.CenterVertically))
+                        IconButton(
                             onClick = { /*TODO*/ },
-                            shape = CircleShape,
+                            modifier = Modifier
+                                .weight(2f)
+                                .align(Alignment.CenterVertically)
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.baseline_add_shopping_cart_24),
-                                contentDescription = "비교하기"
+                                contentDescription = "비교하기",
+                                tint = Color(0xFF326A29)
                             )
                         }
                     }
@@ -180,29 +201,44 @@ fun HeaderBar() {
         modifier = Modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.primary)
-            .padding(vertical = 8.dp),
+            .padding(vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
             text = "번호",
             color = Color.White,
-            modifier = Modifier.weight(1f).padding(start = 8.dp)
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = 4.dp, end = 4.dp),
+            textAlign = TextAlign.Center
         )
         Text(
             text = "식품명",
             color = Color.White,
-            modifier = Modifier.weight(3f).padding(start = 8.dp)
+            modifier = Modifier
+                .weight(4f)
+                .padding(start = 4.dp, end = 4.dp),
+            textAlign = TextAlign.Center
         )
         Text(
             text = "에너지(kcal)",
             color = Color.White,
-            modifier = Modifier.weight(2f).padding(start = 8.dp)
+            modifier = Modifier
+                .weight(2f)
+                .padding(start = 4.dp, end = 4.dp),
+            textAlign = TextAlign.Center
         )
         Text(
             text = "비교함",
             color = Color.White,
-            modifier = Modifier.weight(1f).padding(start = 8.dp)
+            modifier = Modifier
+                .weight(2f)
+                .padding(start = 4.dp),
+            textAlign = TextAlign.Center
+
         )
     }
 }
+
+
