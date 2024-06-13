@@ -1,7 +1,9 @@
 package com.example.sjsk.firestore
 
+import android.os.Parcelable
 import android.util.Log
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
 import org.apache.poi.ss.usermodel.WorkbookFactory
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.simpleframework.xml.Element
@@ -45,12 +47,14 @@ data class Body(
     var items: ArrayList<Items>? = null
 )
 
+
 @Root(name = "items", strict = false)
 data class Items(
     @field:ElementList(entry = "item", required = false, inline = true)
     var item: ArrayList<Item>? = null
 )
 
+@Parcelize
 @Root(name = "item", strict = false)
 data class Item(
 //    val NUM: String, //번호
@@ -111,7 +115,7 @@ data class Item(
 
     @field:Element(name = "UPDATE_YMD", required = false)
     var UPDATE_YMD: String? = null
-)
+) : Parcelable
 
 
 

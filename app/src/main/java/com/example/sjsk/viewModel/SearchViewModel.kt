@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.sjsk.firestore.ApiResponse
+import com.example.sjsk.firestore.Item
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,6 +19,8 @@ class SearchViewModel(private val repository: Repository) : ViewModel() {
     private var totalPages = 1
     private var currentFoodName = ""
 
+    private val _selectedItem = MutableStateFlow<Item?>(null)
+    val selectedItem: StateFlow<Item?> = _selectedItem
     fun searchFood(foodName: String) {
         currentFoodName = foodName
         currentPage = 1
@@ -30,6 +33,14 @@ class SearchViewModel(private val repository: Repository) : ViewModel() {
 
     fun getTotalPages(): Int {
         return totalPages
+    }
+
+    fun selectItem(item: Item) {
+        _selectedItem.value = item
+    }
+
+    fun clearSelectedItem() {
+        _selectedItem.value = null
     }
 
     fun fetchFoodData() {
