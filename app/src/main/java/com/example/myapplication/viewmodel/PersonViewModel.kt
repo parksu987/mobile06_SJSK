@@ -29,7 +29,7 @@ class PersonViewModel (private val repository: PersonRepository) : ViewModel() {
         repository.getPerson(personID)
     }
 
-    fun updatePersonIntake(intake:Map<LocalDate, Nutrient>) {
+    fun updatePersonIntake(intake:Map<String, Nutrient>) {
         viewModelScope.launch {
             repository.updatePersonIntake(intake)
         }

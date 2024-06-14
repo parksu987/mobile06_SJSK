@@ -10,7 +10,7 @@ class PersonRepository(private val table:DatabaseReference) {
         table.child("id").get()
     }
 
-    fun updatePersonIntake(intake:Map<LocalDate, Nutrient>){
+    fun updatePersonIntake(intake:Map<String, Nutrient>){
         table.child("intake").setValue(intake)
     }
 

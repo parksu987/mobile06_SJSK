@@ -82,7 +82,9 @@ fun SignupActivityCompose(navController: NavController, viewModel : LoginViewMod
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
-            onClick = { /* Handle save */ },
+            onClick = {
+
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 20.dp)

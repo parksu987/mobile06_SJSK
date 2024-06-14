@@ -46,4 +46,22 @@ class LoginRepository(private val db: FirebaseFirestore) {
             emit(null)  // Emit null on exception
         }
     }
+
+    fun addPersonIntake(intake: Map<String, Nutrient>) {
+        val dateStr = date.format(DateTimeFormatter.ISO_LOCAL_DATE)
+        val intakeRef = db.collection("users").document("ZXrdvGfY3ZLtJixdUBqD").collection("test").document("test").collection("intake").document(dateStr)
+        intakeRef.set(intake)
+    }
+
+    fun updatePersonNutrient(kcal: Int, nutrient: Nutrient) {
+        val userRef = db.collection("users").document("ZXrdvGfY3ZLtJixdUBqD").collection("test").document("test")
+        userRef.update(
+            mapOf(
+                "kcal" to kcal,
+                "carbohydrate" to nutrient.carbohydrate,
+                "protein" to nutrient.protein,
+                "fat" to nutrient.fat
+            )
+        )
+    }
 }

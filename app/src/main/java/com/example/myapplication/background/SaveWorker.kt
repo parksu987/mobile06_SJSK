@@ -1,6 +1,8 @@
 package com.example.myapplication.background
 
 import android.content.Context
+import androidx.compose.runtime.collectAsState
+import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.example.myapplication.DB.Nutrient
@@ -8,25 +10,29 @@ import com.example.myapplication.roomDB.Eating
 import com.example.myapplication.roomDB.EatingDatabase
 import com.example.myapplication.viewmodel.EatingRepository
 import com.example.myapplication.viewmodel.EatingViewModel
+import com.example.myapplication.viewmodel.LoginRepository
+import com.example.myapplication.viewmodel.LoginViewModel
 import com.example.myapplication.viewmodel.PersonRepository
 import com.example.myapplication.viewmodel.PersonViewModel
 import com.google.firebase.database.ktx.database
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.MutableStateFlow
 import java.time.LocalDate
 
-class SaveWorker(ctx:Context, params: WorkerParameters) : CoroutineWorker(ctx, params) {
+@HiltWorker
+class SaveWorker @AssistedInject constructor(
+    @Assisted ctx:Context,
+    @Assisted params: WorkerParameters,
+    private var loginViewModel: LoginViewModel,
+    private var eatingViewModel: EatingViewModel
+) : CoroutineWorker(ctx, params) {
     override suspend fun doWork(): Result {
         return try {
-
-            val table = Firebase.database.getReference("Products/people")
-
-            val personViewModel = PersonViewModel(PersonRepository(table))
-            personViewModel.getPerson("id")
-            val eatingDatabase = EatingDatabase.getEatingDatabase(applicationContext)
-
-            var eating = MutableStateFlow<List<Eating>>(emptyList())
-            eatingDatabase.getDao().getAllEating().collect{eating.value = it}
+            var eating = eatingViewModel.todayEating
 
             var todayCarbohydrate = .0
             var todayProtein = .0
@@ -42,9 +48,10 @@ class SaveWorker(ctx:Context, params: WorkerParameters) : CoroutineWorker(ctx, p
                 return Result.success()
             }
 
-            personViewModel.updatePersonIntake(mapOf(LocalDate.now().minusDays(1) to Nutrient(todayCarbohydrate, todayProtein, todayFat)))
+            val today = LocalDate.now().minusDays(1).toString()
+            loginViewModel.updatePersonIntake(mapOf(today to Nutrient(todayCarbohydrate, todayProtein, todayFat)))
 
-            EatingViewModel(EatingRepository(eatingDatabase)).deleteAllEating()
+            eatingViewModel.deleteAllEating()
 
             Result.success()
         } catch (e:Exception){

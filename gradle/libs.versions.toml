@@ -17,6 +17,10 @@ navigationCompose = "2.8.0-beta02"
 roomKtx = "2.7.0-alpha03"
 firebaseDatabaseKtx = "21.0.0"
 materialIconsExtended = "1.7.0-beta02"
+hiltWork = "1.2.0"
+hiltCompiler = "1.2.0"
+timber = "5.0.1"
+workMultiprocess = "2.10.0-alpha02"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -42,6 +46,10 @@ androidx-navigation-compose = { group = "androidx.navigation", name = "navigatio
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomKtx" }
 firebase-database-ktx = { group = "com.google.firebase", name = "firebase-database-ktx", version.ref = "firebaseDatabaseKtx" }
 androidx-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "materialIconsExtended" }
+androidx-hilt-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "hiltWork" }
+androidx-hilt-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "hiltCompiler" }
+timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
+androidx-work-multiprocess = { group = "androidx.work", name = "work-multiprocess", version.ref = "workMultiprocess" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

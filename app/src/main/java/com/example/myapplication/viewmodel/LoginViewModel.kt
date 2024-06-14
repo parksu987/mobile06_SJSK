@@ -1,8 +1,10 @@
 package com.example.myapplication.viewmodel
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.myapplication.DB.Nutrient
 import com.example.myapplication.DB.Person
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,6 +25,8 @@ class LoginViewModel(private val repository: LoginRepository): ViewModel() {
     private val _person = MutableStateFlow<Person?>(null)
     val person: StateFlow<Person?> = _person.asStateFlow()
 
+    var loginStatus = mutableStateOf(false)
+
     fun checkLogin(userId: String, password: String) {
         viewModelScope.launch {
             repository.checkLogin(userId, password).collect { person ->
@@ -30,6 +34,23 @@ class LoginViewModel(private val repository: LoginRepository): ViewModel() {
             }
         }
     }
+
+    fun setLoginStatus(userID:String, password:String):Boolean {
+        if(checkLogin(userID, password) != null){
+            loginStatus.value = true
+            return true
+        }
+        return false
+    }
+
+    fun updatePersonIntake(intake: Map<String, Nutrient>) {
+        repository.updatePersonIntake(intake)
+    }
+
+    fun updatePersonNutrient(kcal: Int, nutrient: Nutrient) {
+        repository.updatePersonNutrient(kcal, nutrient)
+    }
+
 }
 
 

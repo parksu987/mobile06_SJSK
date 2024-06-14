@@ -1,9 +1,9 @@
 <component name="libraryTable">
-  <library name="Gradle: androidx.compose.ui:ui-test-manifest:1.7.0-beta02@aar">
+  <library name="Gradle: androidx.compose.ui:ui-test-manifest:1.7.0-beta02@aar" external-system-id="GRADLE">
     <CLASSES>
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/9a62c0280c122f159e932d5558c9a74e/transformed/ui-test-manifest-1.7.0-beta02/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/9a62c0280c122f159e932d5558c9a74e/transformed/ui-test-manifest-1.7.0-beta02/res" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/9a62c0280c122f159e932d5558c9a74e/transformed/ui-test-manifest-1.7.0-beta02/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/098b7fb9c6644524c3abfb3890e04591/transformed/ui-test-manifest-1.7.0-beta02/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/098b7fb9c6644524c3abfb3890e04591/transformed/ui-test-manifest-1.7.0-beta02/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/098b7fb9c6644524c3abfb3890e04591/transformed/ui-test-manifest-1.7.0-beta02/AndroidManifest.xml" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

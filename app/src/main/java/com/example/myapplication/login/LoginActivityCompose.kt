@@ -42,6 +42,8 @@ fun LoginActivityCompose(navController: NavController, viewModel : LoginViewMode
     var id by rememberSaveable { mutableStateOf("") }
     var pw by rememberSaveable { mutableStateOf("") }
 
+    var login_result: Boolean = false
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -95,7 +97,15 @@ fun LoginActivityCompose(navController: NavController, viewModel : LoginViewMode
         Spacer(modifier = Modifier.height(20.dp)) // Spacing between card and buttons
 
         Button(
-            onClick = { viewModel.checkLogin(id, pw) },
+            onClick = {
+                login_result = viewModel.setLoginStatus(id, pw)
+                if (login_result) {
+                    navController.navigate("main")
+                }
+                else{
+                    navController.navigate("signup")
+                }
+                      },
             modifier = Modifier
                 .fillMaxWidth(0.7f)
                 .height(50.dp),
