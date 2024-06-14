@@ -46,4 +46,56 @@ class LoginRepository(private val db: FirebaseFirestore) {
             emit(null)  // Emit null on exception
         }
     }
+
+    fun checkIdDuplication(userId: String): Flow<Boolean> = flow {
+        try {
+            val userRef = db.collection("users").document("ZXrdvGfY3ZLtJixdUBqD").collection(userId).document(userId)
+            val snapshot = userRef.get().await()
+
+            // Emit true if the document exists (i.e., the userId is duplicated)
+            emit(snapshot.exists())
+        } catch (e: Exception) {
+            Log.d("CheckIdDuplication", "Error checking ID 중복: $e")
+            emit(false)  // Emit false on exception, assuming non-existence if there's an error
+        }
+    }
+    fun signUp(name: String, id: String, pw: String): Flow<Boolean> = flow {
+        try {
+            // Create a reference to the user's document based on the provided ID
+            val userCollectionRef = db.collection("users").document("ZXrdvGfY3ZLtJixdUBqD").collection(id)
+            val userDocRef = userCollectionRef.document(id)
+
+            // Check if user already exists to prevent duplication
+            val snapshot = userDocRef.get().await()
+            if (snapshot.exists()) {
+                Log.d("SignUp", "실패 id = $id")
+                emit(false) // User already exists, do not proceed with creation
+                return@flow
+            }
+
+            // Create a new Person object with default values for nutritional information
+            val person = Person(
+                id = id,
+                pw = pw,
+                name = name,
+                age = 0, // Default age if not provided
+                height = 0.0, // Default height if not provided
+                weight = 0.0, // Default weight if not provided
+                kcal = 0, // Default kcal if not provided
+                carbohydrate = 0.0, // Default carbohydrate if not provided
+                protein = 0.0, // Default protein if not provided
+                fat = 0.0, // Default fat if not provided
+                intake = mapOf() // Default intake map
+            )
+
+            userDocRef.set(person).await()
+            Log.d("SignUp", "성공")
+            emit(true) // Successfully created new user
+        } catch (e: Exception) {
+            Log.d("SignUp", "Error during sign-up: $e")
+            emit(false) // Emit false on exception
+        }
+    }
+
+
 }

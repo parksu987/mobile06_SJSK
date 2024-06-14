@@ -18,20 +18,49 @@ class LoginViewModelFactory(private val repository: LoginRepository): ViewModelP
         throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
-
 class LoginViewModel(private val repository: LoginRepository): ViewModel() {
     private val _person = MutableStateFlow<Person?>(null)
     val person: StateFlow<Person?> = _person.asStateFlow()
+
+    // 로그인 상태를 관리하는 StateFlow 추가
+    private val _loginStatus = MutableStateFlow<LoginStatus?>(null)
+    val loginStatus: StateFlow<LoginStatus?> = _loginStatus.asStateFlow()
+    // 중복 확인 결과 상태
+    private val _isIdDuplicated = MutableStateFlow(false)
+    val isIdDuplicated: StateFlow<Boolean> = _isIdDuplicated.asStateFlow()
 
     fun checkLogin(userId: String, password: String) {
         viewModelScope.launch {
             repository.checkLogin(userId, password).collect { person ->
                 _person.value = person
+                _loginStatus.value = if (person != null) LoginStatus.SUCCESS else LoginStatus.FAILURE
             }
         }
     }
+
+    // ID 중복 확인 함수
+    fun checkIdDuplication(id: String) {
+        viewModelScope.launch {
+            repository.checkIdDuplication(id).collect { isDuplicated ->
+                _isIdDuplicated.value = isDuplicated
+            }
+        }
+    }
+
+  fun signUp(name : String, id : String, pw :String) {
+        viewModelScope.launch {
+            repository.signUp(name, id, pw).collect { isDuplicated ->
+                _isIdDuplicated.value = isDuplicated
+            }
+        }
+    }
+
 }
 
+enum class LoginStatus {
+    SUCCESS,
+    FAILURE
+}
 
 
 

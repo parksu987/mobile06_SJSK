@@ -1,5 +1,5 @@
 <component name="libraryTable">
-  <library name="Gradle: com.patrykandpatrick.vico:core:2.0.0-alpha.20@aar">
+  <library name="Gradle: com.patrykandpatrick.vico:core:2.0.0-alpha.20@aar" external-system-id="GRADLE">
     <CLASSES>
       <root url="file://$USER_HOME$/.gradle/caches/transforms-3/60901151fa048c207af39b3f94a161d6/transformed/core-2.0.0-alpha.20/AndroidManifest.xml" />
       <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/60901151fa048c207af39b3f94a161d6/transformed/core-2.0.0-alpha.20/jars/classes.jar!/" />

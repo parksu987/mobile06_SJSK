@@ -1,6 +1,7 @@
 package com.example.myapplication.login
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -18,8 +19,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -33,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.myapplication.R
+import com.example.myapplication.viewmodel.LoginStatus
 import com.example.myapplication.viewmodel.LoginViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,6 +46,8 @@ import com.example.myapplication.viewmodel.LoginViewModel
 fun LoginActivityCompose(navController: NavController, viewModel : LoginViewModel) {
     var id by rememberSaveable { mutableStateOf("") }
     var pw by rememberSaveable { mutableStateOf("") }
+    val loginStatus by viewModel.loginStatus.collectAsState()
+    var loginAttempted by remember { mutableStateOf(false) } // 로그인 시도 여부를 추적
 
     Column(
         modifier = Modifier
@@ -50,8 +57,6 @@ fun LoginActivityCompose(navController: NavController, viewModel : LoginViewMode
         verticalArrangement = Arrangement.Top
     ) {
         Spacer(modifier = Modifier.height(160.dp)) // For vertical spacing at the top
-
-        Spacer(modifier = Modifier.height(16.dp)) // Spacing between image and card
 
         Column(
             modifier = Modifier.padding(20.dp).fillMaxWidth(),
@@ -74,6 +79,7 @@ fun LoginActivityCompose(navController: NavController, viewModel : LoginViewMode
             )
 
             Spacer(modifier = Modifier.height(16.dp))
+
             TextField(
                 value = pw,
                 onValueChange = { pw = it },
@@ -92,10 +98,30 @@ fun LoginActivityCompose(navController: NavController, viewModel : LoginViewMode
             )
         }
 
-        Spacer(modifier = Modifier.height(20.dp)) // Spacing between card and buttons
+        Spacer(modifier = Modifier.height(20.dp))
+
+
+        // Handle navigation as a side effect
+        LaunchedEffect(loginStatus) {
+            if (loginStatus == LoginStatus.SUCCESS) {
+                navController.navigate("MyPage") {
+                    // Pop up to the start destination of the graph to avoid creating a large stack of destinations
+                    popUpTo(navController.graph.startDestinationId) {
+                        saveState = true
+                    }
+                    // Avoid multiple copies of the same destination when reselecting the same item
+                    launchSingleTop = true
+                }
+            }
+
+        }
+
 
         Button(
-            onClick = { viewModel.checkLogin(id, pw) },
+            onClick = {
+                viewModel.checkLogin(id, pw)
+                loginAttempted = true // 로그인 시도 상태를 true로 설정
+            },
             modifier = Modifier
                 .fillMaxWidth(0.7f)
                 .height(50.dp),
@@ -106,10 +132,10 @@ fun LoginActivityCompose(navController: NavController, viewModel : LoginViewMode
             Text("Log In")
         }
 
-        Spacer(modifier = Modifier.height(16.dp)) // Spacing between login and signup buttons
+        Spacer(modifier = Modifier.height(16.dp))
 
         Button(
-            onClick = {navController.navigate("signup")},
+            onClick = { navController.navigate("signup") },
             modifier = Modifier
                 .fillMaxWidth(0.7f)
                 .height(50.dp),
@@ -120,25 +146,5 @@ fun LoginActivityCompose(navController: NavController, viewModel : LoginViewMode
             Text("Sign Up")
         }
     }
-}
-
-@Composable
-fun LoginTextField(hint: String, icon: Int, isPassword: Boolean = false) {
-    TextField(
-        value = "",
-        onValueChange = { /* TODO: Handle text change */ },
-        singleLine = true,
-        visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
-        leadingIcon = {
-            Icon(
-                painter = painterResource(id = icon),
-                contentDescription = null
-            )
-        },
-        placeholder = {
-            Text(text = hint, fontSize = 15.sp)
-        },
-        modifier = Modifier.fillMaxWidth()
-    )
 }
 

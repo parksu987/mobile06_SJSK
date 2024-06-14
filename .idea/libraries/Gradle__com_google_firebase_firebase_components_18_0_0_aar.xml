@@ -1,5 +1,5 @@
 <component name="libraryTable">
-  <library name="Gradle: com.google.firebase:firebase-components:18.0.0@aar">
+  <library name="Gradle: com.google.firebase:firebase-components:18.0.0@aar" external-system-id="GRADLE">
     <ANNOTATIONS>
       <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/41f5048365b088d407928654449b4efa/transformed/firebase-components-18.0.0/annotations.zip!/" />
     </ANNOTATIONS>

@@ -1,5 +1,5 @@
 <component name="libraryTable">
-  <library name="Gradle: androidx.room:room-runtime-android:2.7.0-alpha03@aar">
+  <library name="Gradle: androidx.room:room-runtime-android:2.7.0-alpha03@aar" external-system-id="GRADLE">
     <CLASSES>
       <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/d73da25e5dd7da492e50d6e4a2a31c6f/transformed/room-runtime-release/jars/classes.jar!/" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-3/d73da25e5dd7da492e50d6e4a2a31c6f/transformed/room-runtime-release/res" />
