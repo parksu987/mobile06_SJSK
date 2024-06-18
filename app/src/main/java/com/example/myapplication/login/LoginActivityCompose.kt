@@ -100,7 +100,7 @@ fun LoginActivityCompose(navController: NavController, viewModel : LoginViewMode
             onClick = {
                 login_result = viewModel.setLoginStatus(id, pw)
                 if (login_result) {
-                    navController.navigate("main")
+                    navController.navigate("mypage")
                 }
                 else{
                     navController.navigate("signup")

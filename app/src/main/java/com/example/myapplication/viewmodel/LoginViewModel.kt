@@ -44,7 +44,7 @@ class LoginViewModel(private val repository: LoginRepository): ViewModel() {
     }
 
     fun updatePersonIntake(intake: Map<String, Nutrient>) {
-        repository.updatePersonIntake(intake)
+        repository.addPersonIntake(intake)
     }
 
     fun updatePersonNutrient(kcal: Int, nutrient: Nutrient) {
