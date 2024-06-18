@@ -1,8 +1,8 @@
 <component name="libraryTable">
   <library name="Gradle: com.github.tehras.charts:common:0.2.4-alpha@aar" external-system-id="GRADLE">
     <CLASSES>
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/e876aa5005349ae11f932f448cb0ee12/transformed/common-0.2.4-alpha/AndroidManifest.xml" />
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/e876aa5005349ae11f932f448cb0ee12/transformed/common-0.2.4-alpha/jars/classes.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/da3f4374919c23ec05a1baf42198882a/transformed/common-0.2.4-alpha/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/da3f4374919c23ec05a1baf42198882a/transformed/common-0.2.4-alpha/AndroidManifest.xml" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

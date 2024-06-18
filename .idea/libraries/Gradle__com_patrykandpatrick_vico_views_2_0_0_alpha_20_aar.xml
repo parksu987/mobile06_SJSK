@@ -1,9 +1,9 @@
 <component name="libraryTable">
   <library name="Gradle: com.patrykandpatrick.vico:views:2.0.0-alpha.20@aar" external-system-id="GRADLE">
     <CLASSES>
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/537af767123dc5331cab15cad79f7969/transformed/views-2.0.0-alpha.20/AndroidManifest.xml" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/537af767123dc5331cab15cad79f7969/transformed/views-2.0.0-alpha.20/res" />
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/537af767123dc5331cab15cad79f7969/transformed/views-2.0.0-alpha.20/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/d1dfc40c2fceba484d2145150b0e3a58/transformed/views-2.0.0-alpha.20/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/d1dfc40c2fceba484d2145150b0e3a58/transformed/views-2.0.0-alpha.20/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/d1dfc40c2fceba484d2145150b0e3a58/transformed/views-2.0.0-alpha.20/AndroidManifest.xml" />
     </CLASSES>
     <JAVADOC>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.patrykandpatrick.vico/views/2.0.0-alpha.20/22497ef1178fb3e16afbaef7c40dab0a9d33941b/views-2.0.0-alpha.20-javadoc.jar!/" />

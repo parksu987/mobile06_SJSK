@@ -21,7 +21,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import com.example.myapplication.com.example.myapplication.MainActivity
+import com.example.myapplication.MainActivity
 import com.example.myapplication.R
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
