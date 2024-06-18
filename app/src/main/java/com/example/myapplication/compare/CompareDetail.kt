@@ -21,6 +21,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -109,20 +110,9 @@ fun ProductList(products: List<Product>, viewModel: ProductViewModel) {
 }
 
 @Composable
-fun ProductItem(product: Product, onRemove: () -> Unit) {
-    // Layout for product, with a remove button
-    Row {
-        Text(product.name)
-        Button(onClick = onRemove) {
-            Text("Remove")
-        }
-    }
-}
-
-@Composable
-fun ProductListDialog(products: MutableList<Product>, onDismissRequest: () -> Unit,  viewModel: ProductViewModel) {
-    // It's important to create this state list inside the composable to react to changes correctly.
+fun ProductListDialog(products: MutableList<Product>, onDismissRequest: () -> Unit, viewModel: ProductViewModel) {
     val safeProducts = remember { mutableStateListOf<Product>().also { it.addAll(products) } }
+    val checkedState = remember { mutableStateMapOf<String, Boolean>() }
 
     AlertDialog(
         onDismissRequest = onDismissRequest,
@@ -130,25 +120,50 @@ fun ProductListDialog(products: MutableList<Product>, onDismissRequest: () -> Un
         text = {
             LazyColumn {
                 itemsIndexed(safeProducts, key = { index, item -> item.name }) { index, product ->
-                    SwipeToDeleteItem(
-                        product = product,
-                        onDismissed = {
-                            // safeProducts 리스트에서 제품을 직접 제거합니다.
-                            safeProducts.removeAt(index)
-                            // ViewModel의 removeProduct 메서드를 호출하여 제품을 제거합니다.
-                            viewModel.removeProduct(product)
-                        }
-                    )
+                    ProductItem(product, checkedState)
                 }
             }
         },
         confirmButton = {
             Button(onClick = onDismissRequest) { Text("Close") }
         },
+        dismissButton = {
+            Button(
+                onClick = {
+                    val toDeleteNames = checkedState.filter { it.value }.keys.toList()
+                    toDeleteNames.forEach { name ->
+                        viewModel.removeProduct(safeProducts.first { it.name == name })
+                    }
+                    safeProducts.removeAll { product -> toDeleteNames.contains(product.name) }
+                    checkedState.clear()
+                },
+                enabled = checkedState.containsValue(true)
+            ) { Text("Delete") }
+        },
         modifier = Modifier.fillMaxWidth().padding(16.dp)
     )
 }
 
+@Composable
+fun ProductItem(product: Product, checkedState: MutableMap<String, Boolean>) {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = product.name,
+            modifier = Modifier.weight(1f).padding(end = 8.dp),
+            maxLines = 1
+        )
+        Checkbox(
+            checked = checkedState[product.name] ?: false,
+            onCheckedChange = { isChecked ->
+                checkedState[product.name] = isChecked
+            }
+        )
+    }
+}
 
 
 @Composable
