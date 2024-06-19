@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -43,13 +44,12 @@ fun FoodList(dataBody: Body?, list: List<Items>, onClick:(Item)->Unit) {
                 HeaderBar(purposeText = "추가")
             }
 
-            list.forEach { items ->
+            items(list) { items ->
                 items.item?.forEachIndexed { index, item ->
-                    item {
-                        FoodUI(dataBody = dataBody, item = item, index = index) {
-                            onClick(item)
-                        }
+                    FoodUI(dataBody = dataBody, item = item, index = index) {
+                        onClick(item)
                     }
+//                    FoodUI(dataBody = dataBody, item = item, index = index, {onClick(item)})
                 }
             }
         }
@@ -115,28 +115,85 @@ fun FoodUI(dataBody: Body?, item: Item, index:Int, onClick:(item: Item)->Unit) {
 
 
 @Composable
-fun EatingList(list: List<Eating>) {
+fun EatingList(list: List<Eating>, onClick: (Eating) -> Unit) {
+//    LazyColumn {
+//        items(list) {eating ->
+//            EatingUI(eating)
+//        }
+//        item{
+//            Spacer(modifier = Modifier.height(80.dp))
+//
+//        }
+//    }
+
     LazyColumn {
-        items(list) {eating ->
-            EatingUI(eating)
+        item{
+            HeaderBar(purposeText = "삭제")
+        }
+
+        list.forEachIndexed { index, eating ->
+            item{
+                EatingUI(eating, index) {
+                    onClick(it)
+                }
+            }
+
         }
     }
+
 }
 
 
 @Composable
-fun EatingUI(eating: Eating) {
+fun EatingUI(eating: Eating, index: Int, onClick:(Eating)->Unit) {
+//    Row(
+//        modifier = Modifier
+//            .padding(10.dp)
+//            .fillMaxWidth()
+//            .background(color = Color.LightGray)
+//            .border(BorderStroke(3.dp, Color.Red))
+//        ,
+//        horizontalArrangement = Arrangement.SpaceAround,
+//        verticalAlignment = Alignment.CenterVertically
+//    ) {
+//        Text(eating.foodName, fontSize=25.sp)
+//        Text(eating.kcal.toString(), fontSize=25.sp)
+//    }
+
     Row(
         modifier = Modifier
-            .padding(10.dp)
-            .fillMaxWidth()
-            .background(color = Color.LightGray)
-            .border(BorderStroke(3.dp, Color.Red))
-        ,
-        horizontalArrangement = Arrangement.SpaceAround,
+            .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(eating.foodName, fontSize=25.sp)
-        Text(eating.kcal.toString(), fontSize=25.sp)
+        Text(
+            text = "${index+1}",
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = 10.dp)
+                .align(Alignment.CenterVertically)
+        )
+        Text(
+            text = "${eating.foodName.split("_")?.get(1)}",
+            modifier = Modifier
+                .weight(4f)
+                .align(Alignment.CenterVertically)
+        )
+        Text(
+            text = "${eating.kcal}",
+            modifier = Modifier
+                .weight(1f)
+                .align(Alignment.CenterVertically)
+        )
+        IconButton(
+            onClick = { onClick(eating) },
+            modifier = Modifier
+                .weight(2f)
+                .align(Alignment.CenterVertically)
+        ) {
+            Icon(
+                Icons.Default.Delete,
+                contentDescription = "",
+            )
+        }
     }
 }
