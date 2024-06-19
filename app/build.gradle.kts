@@ -4,6 +4,7 @@ plugins {
     id("com.google.gms.google-services")
     id("dagger.hilt.android.plugin")
     id("kotlin-kapt")
+    id("kotlin-parcelize")
 }
 
 android {
@@ -75,6 +76,7 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation("com.google.firebase:firebase-firestore:25.0.0")
     implementation(libs.androidx.hilt.work)
+//    kapt("androidx.hilt:hilt-common:1.2.0")
     implementation(libs.timber)
     implementation(libs.androidx.work.multiprocess)
     implementation("com.google.dagger:hilt-android:2.44")
@@ -102,4 +104,23 @@ dependencies {
 
     // For the view system.
     implementation("com.patrykandpatrick.vico:views:2.0.0-alpha.20")
+
+    implementation(platform("com.google.firebase:firebase-bom:33.0.0"))
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.code.gson:gson:2.11.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.14")
+    implementation("com.squareup.retrofit2:adapter-guava:2.11.0")
+
+    implementation("org.apache.poi:poi:5.2.3")
+    implementation("org.apache.poi:poi-ooxml:5.2.3")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.0")
+
+    implementation("com.google.firebase:firebase-firestore-ktx")
+    implementation("androidx.activity:activity-compose:1.9.0")
+
+
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.retrofit2:converter-simplexml:2.1.0")
+    implementation("com.squareup.okhttp3:okhttp:4.9.0")
 }

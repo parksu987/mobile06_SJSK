@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -21,6 +22,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -32,7 +34,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -40,13 +44,22 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myapplication.DB.Food
 import com.example.myapplication.DB.Nutrient
+import com.example.myapplication.DB.Person
+import com.example.myapplication.R
 import com.example.myapplication.roomDB.Eating
 import com.example.myapplication.viewmodel.EatingViewModel
+import com.example.myapplication.viewmodel.SearchViewModel
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun todayEating(kcal: Int,carbohydrate: Double, protein: Double, fat: Double, eatingViewModel: EatingViewModel) {
+fun todayEating(person: Person, eatingViewModel: EatingViewModel, searchViewModel: SearchViewModel) {
     val spaceModifier = Modifier.height(25.dp)
+
+    val kcal = person.kcal
+    val carbohydrate = person.carbohydrate
+    val protein = person.protein
+    val fat = person.fat
+
 
     var searchStr by remember {
         mutableStateOf("")
@@ -85,31 +98,35 @@ fun todayEating(kcal: Int,carbohydrate: Double, protein: Double, fat: Double, ea
         ) {
             Text(text = "오늘 섭취한 칼로리 기록", fontSize = 35.sp, fontWeight = FontWeight.ExtraBold)
             Spacer(modifier = spaceModifier)
-            searchBar(searchStr) { searchStr = it }
+            searchBar(searchStr, {searchStr = it}) {searchViewModel.searchFood(searchStr) }
             Spacer(modifier = spaceModifier)
             if(searchStr != "") {
-                Text(text="검색 내용 뜨기")
-                val searchList = listOf(
-                    Food("1", "검색된 음식1",1, 100, 0, 0, 0),
-                    Food("2", "검색된 음식2",2, 200, 2, 1, 3),
-                    Food("3", "검색된 음식3",3, 300, 0, 0, 0),
-                    Food("4", "검색된 음식4",4, 400, 0, 0, 0),
-                    Food("5", "검색된 음식5",5, 500, 0, 0, 0),
-                )
-                FoodList(list = searchList, onClick = {food ->
+//                Text(text="검색 내용 뜨기")
+//                val searchList = listOf(
+//                    Food("1", "검색된 음식1",1, 100, 0, 0, 0),
+//                    Food("2", "검색된 음식2",2, 200, 2, 1, 3),
+//                    Food("3", "검색된 음식3",3, 300, 0, 0, 0),
+//                    Food("4", "검색된 음식4",4, 400, 0, 0, 0),
+//                    Food("5", "검색된 음식5",5, 500, 0, 0, 0),
+//                )
+                val data by searchViewModel.data.collectAsState()
+                val dataBody = data?.body
+                val searchList = data?.body?.items ?: emptyList()
+
+                FoodList(dataBody, searchList, onClick = {item ->
                     flag = false
 
                     for(it in eatingViewModel.todayEating.value) {
-                        if(it.foodCode == food.foodCode) {
+                        if(it.foodCode == item.FOOD_CD) {
                             newEating = Eating(
-                                food.foodCode,
-                                food.foodName,
-                                food.foodType,
-                                food.kcal,
-                                food.carbohydrate,
-                                food.protein,
-                                food.fat,
-                                it.gram
+                                item.FOOD_CD!!,
+                                item.FOOD_NM_KR!!,
+                                item.AMT_NUM1!!.toDouble(),  //kcal
+                                item.AMT_NUM6!!.toDouble(),  //carbohydrate
+                                item.AMT_NUM3!!.toDouble(),  //protein
+                                item.AMT_NUM4!!.toDouble(),  //fat
+                                it.gram,  //gram
+                                person.id
                             )
                             Log.d("todayEating", "update newEating: ${newEating.toString()}")
                             flag = true
@@ -119,14 +136,14 @@ fun todayEating(kcal: Int,carbohydrate: Double, protein: Double, fat: Double, ea
 
                     if(!flag) {
                         newEating = Eating(
-                            food.foodCode,
-                            food.foodName,
-                            food.foodType,
-                            food.kcal,
-                            food.carbohydrate,
-                            food.protein,
-                            food.fat,
-                            0.0
+                            item.FOOD_CD!!,
+                            item.FOOD_NM_KR!!,
+                            item.AMT_NUM1!!.toDouble(),  //kcal
+                            item.AMT_NUM6!!.toDouble(),  //carbohydrate
+                            item.AMT_NUM3!!.toDouble(),  //protein
+                            item.AMT_NUM4!!.toDouble(),  //fat
+                            0.0,
+                            person.id
                         )
                         Log.d("todayEating", "create newEating: ${newEating.toString()}")
                     }
@@ -137,8 +154,14 @@ fun todayEating(kcal: Int,carbohydrate: Double, protein: Double, fat: Double, ea
 
             else {
                 val eatingList by eatingViewModel.todayEating.collectAsState()
+                var myEatingList = mutableListOf<Eating>()
 
-                EatingList(list = eatingList)
+                for(eating in eatingList) {
+                    if(eating.personId == person.id) {
+                        myEatingList.add(eating)
+                    }
+                }
+                EatingList(list = myEatingList)
                 for(eating in eatingList) {
                     Log.d("todayEating", "eating: $eating")
                 }
@@ -183,14 +206,9 @@ fun todayEating(kcal: Int,carbohydrate: Double, protein: Double, fat: Double, ea
 
                             Log.d("todayEating", "updateEating")
                         }
-                        Log.d("todayEating", "todayEating: ${eatingViewModel.todayEating.value}")
-                        Log.d("todayEating", "todayEating: ${eatingViewModel.todayEating.value.size}")
-
                         searchStr = ""
                         openDialog = false
-                        for(it in eatingViewModel.todayEating.value) {
-                            Log.d("todayEating", "todayEating: ${it.toString()}")
-                        }
+
                     }
                     else {
                         Log.d("todayEating", "newEating is null")
@@ -204,26 +222,53 @@ fun todayEating(kcal: Int,carbohydrate: Double, protein: Double, fat: Double, ea
 
 
 @Composable
-fun searchBar(searchStr:String, onSearch: (String) -> Unit) {
+fun searchBar(searchStr: String, onValueChange: (String) -> Unit, onSearch: () -> Unit) {
 
-    val keyboardController = LocalSoftwareKeyboardController.current
+//    val keyboardController = LocalSoftwareKeyboardController.current
+//
+//    TextField(
+//        value = searchStr,
+//        onValueChange = onSearch,
+//        leadingIcon = {
+//            Icon(
+//               Icons.Default.Search,
+//                contentDescription = null
+//            )
+//        },
+//        keyboardOptions = KeyboardOptions.Default.copy(
+//            imeAction = ImeAction.Search
+//        ),
+//        keyboardActions = KeyboardActions(onDone = {
+//            keyboardController?.hide()
+//        }),
+//    )
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        OutlinedTextField(
+            value = searchStr,
+            onValueChange = { onValueChange(it) },
+            label = { Text("Search Food") },
+            modifier = Modifier
+                .weight(1f)
+                .height(IntrinsicSize.Min),
+        )
 
-    TextField(
-        value = searchStr,
-        onValueChange = onSearch,
-        leadingIcon = {
+        Spacer(modifier = Modifier.width(8.dp))
+
+        Button(
+            onClick = { onSearch() },
+            modifier = Modifier.height(IntrinsicSize.Min)
+//                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3F51B5))
+        ) {
             Icon(
-               Icons.Default.Search,
-                contentDescription = null
+                imageVector = ImageVector.vectorResource(id = R.drawable.baseline_search_24),
+                contentDescription = "Search",
+                tint = Color.White
             )
-        },
-        keyboardOptions = KeyboardOptions.Default.copy(
-            imeAction = ImeAction.Search
-        ),
-        keyboardActions = KeyboardActions(onDone = {
-            keyboardController?.hide()
-        }),
-    )
+        }
+    }
 }
 
 

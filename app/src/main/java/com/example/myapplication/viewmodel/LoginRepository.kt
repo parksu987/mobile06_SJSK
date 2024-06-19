@@ -47,23 +47,28 @@ class LoginRepository(private val db: FirebaseFirestore) {
         }
     }
 
-//    fun addPersonIntake(intake: Map<String, Nutrient>) {
-//        val dateStr = date.format(DateTimeFormatter.ISO_LOCAL_DATE)
-//        val intakeRef = db.collection("users").document("ZXrdvGfY3ZLtJixdUBqD").collection("test").document("test").collection("intake").document(dateStr)
-//        intakeRef.set(intake)
-//    }
-//
-//    fun updatePersonNutrient(kcal: Int, nutrient: Nutrient) {
-//        val userRef = db.collection("users").document("ZXrdvGfY3ZLtJixdUBqD").collection("test").document("test")
-//        userRef.update(
-//            mapOf(
-//                "kcal" to kcal,
-//                "carbohydrate" to nutrient.carbohydrate,
-//                "protein" to nutrient.protein,
-//                "fat" to nutrient.fat
-//            )
-//        )
-//    }
+    fun addPersonIntake(userId: String, intake: Map<String, Nutrient>) {
+        val dateStr = date.format(DateTimeFormatter.ISO_LOCAL_DATE)
+        val intakeRef = db.collection("users").document("ZXrdvGfY3ZLtJixdUBqD").collection(userId).document(userId).collection("intake").document(dateStr)
+        intakeRef.set(intake)
+    }
+
+    fun updatePersonNutrient(userId:String, kcal: Int, nutrient: Nutrient) {
+        val userRef = db.collection("users").document("ZXrdvGfY3ZLtJixdUBqD").collection(userId).document(userId)
+        userRef.update(
+            mapOf(
+                "kcal" to kcal,
+                "carbohydrate" to nutrient.carbohydrate,
+                "protein" to nutrient.protein,
+                "fat" to nutrient.fat
+            )
+        )
+    }
+
+    fun updatePersonInfo(userId: String, person:Person) {
+        val userRef = db.collection("users").document("ZXrdvGfY3ZLtJixdUBqD").collection(userId).document(userId)
+        userRef.set(person)
+    }
 
     fun checkIdDuplication(userId: String): Flow<Boolean> = flow {
         try {

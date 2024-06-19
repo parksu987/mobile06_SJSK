@@ -1,6 +1,7 @@
 package com.example.myapplication.viewmodel
 
 import com.example.myapplication.DB.Nutrient
+import com.example.myapplication.DB.Person
 import com.google.firebase.database.DatabaseReference
 import java.time.LocalDate
 
@@ -8,6 +9,10 @@ class PersonRepository(private val table:DatabaseReference) {
 
     fun getPerson(personID:String){
         table.child("id").get()
+    }
+
+    fun updatePerson(person: Person){
+
     }
 
     fun updatePersonIntake(intake:Map<String, Nutrient>){
