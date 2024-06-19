@@ -26,7 +26,9 @@ fun ScrollToTopButton(goToTop: () -> Unit) {
             colors = ButtonDefaults.outlinedButtonColors(
                 contentColor = Color.DarkGray
             ),
-            modifier = Modifier.padding(5.dp).align(Alignment.BottomEnd)
+            modifier =  Modifier
+                .padding(end = 16.dp, bottom = 80.dp)
+                .align(Alignment.BottomEnd)
         ) {
             Icon(
                 Icons.Default.Home,

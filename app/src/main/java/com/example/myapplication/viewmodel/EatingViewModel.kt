@@ -21,6 +21,10 @@ class EatingViewModel(private val repository: EatingRepository): ViewModel() {
     private var _todayEating = MutableStateFlow<List<Eating>>(emptyList())
     val todayEating = _todayEating.asStateFlow()
 
+    init {
+        getAllEating()
+    }
+
     fun saveEating(eating: Eating) {
         viewModelScope.launch {
             repository.insertEating(eating)
