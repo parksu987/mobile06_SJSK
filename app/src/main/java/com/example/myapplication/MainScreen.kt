@@ -22,6 +22,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.Nav.BottomNavigationBar
 import com.example.myapplication.Nav.NavigationHost
+import com.example.myapplication.background.SaveWorkManager
 import com.example.myapplication.firestore.RetrofitClient
 import com.example.myapplication.roomDB.EatingDatabase
 import com.example.myapplication.viewmodel.EatingRepository
@@ -102,5 +103,8 @@ fun MainScreen(navController: NavHostController) {
                 )
             }
         }
+
+        val workManager = SaveWorkManager(context, loginViewModel = loginViewModel, eatingViewModel = eatingViewModel)
+        workManager.makeNotifyWorkRequest()
     }
 }

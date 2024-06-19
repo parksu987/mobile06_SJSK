@@ -44,7 +44,8 @@ import com.example.myapplication.firestore.ApiResponse
 import com.example.myapplication.firestore.Item
 import com.example.myapplication.viewmodel.SearchViewModel
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.ui.graphics.Shape
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.input.key.Key.Companion.U
 import com.example.myapplication.R
 import kotlin.math.round
 import kotlin.math.roundToInt
@@ -53,6 +54,10 @@ import kotlin.math.roundToInt
 @Composable
 fun SearchScreen(viewModel: SearchViewModel, navController: NavHostController) {
     var searchText by remember { mutableStateOf("") }
+    var searchClicked by remember { mutableStateOf(false)}
+    LaunchedEffect(key1 = Unit) {
+        searchClicked = false
+    }
 
     Column(
         modifier = Modifier
@@ -65,7 +70,7 @@ fun SearchScreen(viewModel: SearchViewModel, navController: NavHostController) {
         ) {
             OutlinedTextField(
                 value = searchText,
-                onValueChange = { searchText = it },
+                onValueChange = {searchText = it},
                 label = { Text("Search Food") },
                 modifier = Modifier
                     .weight(1f)
@@ -75,7 +80,10 @@ fun SearchScreen(viewModel: SearchViewModel, navController: NavHostController) {
             Spacer(modifier = Modifier.width(8.dp))
 
             Button(
-                onClick = { viewModel.searchFood(searchText) },
+                onClick = {
+                            searchClicked = true
+                    viewModel.searchFood(searchText)
+                          },
                 modifier = Modifier.height(IntrinsicSize.Min)
 //                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3F51B5))
             ) {
@@ -90,8 +98,7 @@ fun SearchScreen(viewModel: SearchViewModel, navController: NavHostController) {
         Spacer(modifier = Modifier.height(30.dp))
 
         val data by viewModel.data.collectAsState()
-
-        if (data != null) {
+        if (searchClicked && data != null ) {
             Column {
                 DataDisplay(data = data!!, searchText, navController, viewModel)
                 Spacer(modifier = Modifier.height(8.dp))
@@ -332,9 +339,15 @@ fun NutritionRow(nutrient: String, amount: String?, dailyValue: String) {
 //            .border(1.dp, Color.Black)
             .background(Color.White)
     ) {
-        Text(text = nutrient, modifier = Modifier.weight(1f).padding(8.dp))
-        Text(text = amount ?: "0.00g", modifier = Modifier.weight(1f).padding(8.dp))
-        Text(text = dailyValue, modifier = Modifier.weight(1f).padding(8.dp))
+        Text(text = nutrient, modifier = Modifier
+            .weight(1f)
+            .padding(8.dp))
+        Text(text = amount ?: "0.00g", modifier = Modifier
+            .weight(1f)
+            .padding(8.dp))
+        Text(text = dailyValue, modifier = Modifier
+            .weight(1f)
+            .padding(8.dp))
     }
 }
 
@@ -381,7 +394,11 @@ fun PlusNutritionRow(info: String, value: String?) {
 //            .border(1.dp, Color.Black)
             .background(Color.White)
     ) {
-        Text(text = info, modifier = Modifier.weight(1f).padding(8.dp))
-        Text(text = value ?: "데이터 미등록", modifier = Modifier.weight(1f).padding(8.dp))
+        Text(text = info, modifier = Modifier
+            .weight(1f)
+            .padding(8.dp))
+        Text(text = value ?: "데이터 미등록", modifier = Modifier
+            .weight(1f)
+            .padding(8.dp))
     }
 }

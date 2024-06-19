@@ -162,9 +162,6 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-        val saveWorkManager = SaveWorkManager()
-        saveWorkManager.context = this
-        saveWorkManager.enqueueWorkRequest()
     }
 }
 

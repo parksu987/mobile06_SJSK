@@ -3,12 +3,21 @@ package com.example.myapplication
 import android.app.Application
 import androidx.work.Configuration
 import androidx.work.WorkManager
+import androidx.work.WorkerFactory
 import dagger.hilt.android.HiltAndroidApp
-import dagger.hilt.internal.aggregatedroot.AggregatedRoot
+import javax.inject.Inject
 
 
 @HiltAndroidApp
-class LaunchApplication : Application(), Configuration.Provider {
+class MyApplication : Application(), Configuration.Provider {
+
+//    @Inject
+//    lateinit var workerFactory: WorkerFactory
+//
+//    override val workManagerConfiguration: Configuration
+//        get() = Configuration.Builder()
+//            .setWorkerFactory(workerFactory)
+//            .build()
 
     override fun onCreate() {
         super.onCreate()

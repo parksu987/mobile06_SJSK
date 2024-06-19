@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.SaveAs
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -26,6 +27,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -42,17 +44,20 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.work.ListenableWorker
 import com.example.myapplication.DB.Food
 import com.example.myapplication.DB.Nutrient
 import com.example.myapplication.DB.Person
 import com.example.myapplication.R
 import com.example.myapplication.roomDB.Eating
 import com.example.myapplication.viewmodel.EatingViewModel
+import com.example.myapplication.viewmodel.LoginViewModel
 import com.example.myapplication.viewmodel.SearchViewModel
+import java.time.LocalDate
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun todayEating(person: Person, eatingViewModel: EatingViewModel, searchViewModel: SearchViewModel) {
+fun todayEating(person: Person, eatingViewModel: EatingViewModel, searchViewModel: SearchViewModel, loginViewModel: LoginViewModel) {
     val spaceModifier = Modifier.height(25.dp)
 
     val kcal = person.kcal
@@ -60,6 +65,10 @@ fun todayEating(person: Person, eatingViewModel: EatingViewModel, searchViewMode
     val protein = person.protein
     val fat = person.fat
 
+    var searchClicked by remember { mutableStateOf(false)}
+    LaunchedEffect(key1 = Unit) {
+        searchClicked = false
+    }
 
     var searchStr by remember {
         mutableStateOf("")
@@ -93,38 +102,107 @@ fun todayEating(person: Person, eatingViewModel: EatingViewModel, searchViewMode
             .fillMaxHeight()
     ) {
         Column(
-            modifier = Modifier.padding(10.dp),
+            modifier = Modifier
+                .padding(10.dp)
+                .fillMaxHeight()
+            ,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "오늘 섭취한 칼로리 기록", fontSize = 35.sp, fontWeight = FontWeight.ExtraBold)
+            Row {
+                Text(text = "오늘 섭취한 칼로리 기록", fontSize = 35.sp, fontWeight = FontWeight.ExtraBold)
+                Icon(
+                    Icons.Default.SaveAs,
+                    contentDescription = "save",
+                    modifier = Modifier.clickable {
+                        val today = LocalDate.now().toString()
+                        var eatingList = eatingViewModel.todayEating.value
+
+                        var nutrientMap = mutableMapOf<String, Nutrient>()
+
+                        for(e in eatingList){
+                            if(nutrientMap.containsKey(e.personId)){  //id값이 있는 경우, 기존 영양성분에 더하기
+                                val nutrient = nutrientMap[e.personId]!!
+                                nutrientMap[e.personId] = Nutrient(
+                                    nutrient.carbohydrate + (e.carbohydrate * (e.gram/100)),
+                                    nutrient.protein + (e.protein * (e.gram/100)),
+                                    nutrient.fat + (e.fat * (e.gram/100))
+                                )
+                            } else {
+                                nutrientMap.put(e.personId, Nutrient(
+                                    e.carbohydrate * (e.gram/100),
+                                    e.protein * (e.gram/100),
+                                    e.fat * (e.gram/100)
+                                ))
+                            }
+                        }
+
+                        for(n in nutrientMap){
+                            loginViewModel.updatePersonIntake(n.key, mapOf(today to n.value))
+                        }
+
+                        eatingViewModel.deleteAllEating()
+                    }
+                )
+            }
             Spacer(modifier = spaceModifier)
-            searchBar(searchStr, {searchStr = it}) {searchViewModel.searchFood(searchStr) }
+
+            //searchBar
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                OutlinedTextField(
+                    value = searchStr,
+                    onValueChange = { searchStr = it },
+                    label = { Text("Search Food") },
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(IntrinsicSize.Min),
+                )
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                Button(
+                    onClick = {
+                        searchClicked = true
+                        searchViewModel.searchFood(searchStr)
+                    },
+                    modifier = Modifier.height(IntrinsicSize.Min)
+//                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3F51B5))
+                ) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.baseline_search_24),
+                        contentDescription = "Search",
+                        tint = Color.White
+                    )
+                }
+            }
+
+
             Spacer(modifier = spaceModifier)
-            if(searchStr != "") {
-//                Text(text="검색 내용 뜨기")
-//                val searchList = listOf(
-//                    Food("1", "검색된 음식1",1, 100, 0, 0, 0),
-//                    Food("2", "검색된 음식2",2, 200, 2, 1, 3),
-//                    Food("3", "검색된 음식3",3, 300, 0, 0, 0),
-//                    Food("4", "검색된 음식4",4, 400, 0, 0, 0),
-//                    Food("5", "검색된 음식5",5, 500, 0, 0, 0),
-//                )
+            if(searchStr != "" && searchClicked) {
                 val data by searchViewModel.data.collectAsState()
                 val dataBody = data?.body
                 val searchList = data?.body?.items ?: emptyList()
 
                 FoodList(dataBody, searchList, onClick = {item ->
                     flag = false
+                    Log.d("todayEating", "searchList: ${searchList.toString()}")
 
                     for(it in eatingViewModel.todayEating.value) {
                         if(it.foodCode == item.FOOD_CD) {
+                            val kcal = item.AMT_NUM1?.toDouble() ?: 0.0
+                            val carbohydrate = item.AMT_NUM6?.toDouble() ?: 0.0
+                            val protein = item.AMT_NUM3?.toDouble() ?: 0.0
+                            val fat = item.AMT_NUM4?.toDouble() ?: 0.0
+
                             newEating = Eating(
                                 item.FOOD_CD!!,
                                 item.FOOD_NM_KR!!,
-                                item.AMT_NUM1!!.toDouble(),  //kcal
-                                item.AMT_NUM6!!.toDouble(),  //carbohydrate
-                                item.AMT_NUM3!!.toDouble(),  //protein
-                                item.AMT_NUM4!!.toDouble(),  //fat
+                                kcal,  //kcal
+                                carbohydrate,
+                                protein,
+                                fat,
                                 it.gram,  //gram
                                 person.id
                             )
@@ -135,14 +213,19 @@ fun todayEating(person: Person, eatingViewModel: EatingViewModel, searchViewMode
                     }
 
                     if(!flag) {
+                        val kcal = item.AMT_NUM1?.toDouble() ?: 0.0
+                        val carbohydrate = item.AMT_NUM6?.toDouble() ?: 0.0
+                        val protein = item.AMT_NUM3?.toDouble() ?: 0.0
+                        val fat = item.AMT_NUM4?.toDouble() ?: 0.0
+
                         newEating = Eating(
                             item.FOOD_CD!!,
                             item.FOOD_NM_KR!!,
-                            item.AMT_NUM1!!.toDouble(),  //kcal
-                            item.AMT_NUM6!!.toDouble(),  //carbohydrate
-                            item.AMT_NUM3!!.toDouble(),  //protein
-                            item.AMT_NUM4!!.toDouble(),  //fat
-                            0.0,
+                            kcal,  //kcal
+                            carbohydrate,
+                            protein,
+                            fat,
+                            0.0,  //gram
                             person.id
                         )
                         Log.d("todayEating", "create newEating: ${newEating.toString()}")
@@ -150,6 +233,8 @@ fun todayEating(person: Person, eatingViewModel: EatingViewModel, searchViewMode
 
                     openDialog = true
                 })
+                Spacer(modifier = Modifier.height(8.dp))
+                PageIndicator(searchViewModel)
             }
 
             else {
@@ -161,7 +246,7 @@ fun todayEating(person: Person, eatingViewModel: EatingViewModel, searchViewMode
                         myEatingList.add(eating)
                     }
                 }
-                EatingList(list = myEatingList)
+                EatingList(list = myEatingList, onClick = {eatingViewModel.deleteEating(it)})
                 for(eating in eatingList) {
                     Log.d("todayEating", "eating: $eating")
                 }
@@ -170,25 +255,37 @@ fun todayEating(person: Person, eatingViewModel: EatingViewModel, searchViewMode
 
         }
 
-        Column (modifier = Modifier
-            .padding(10.dp)
-            .align(Alignment.BottomStart)
-            .fillMaxWidth()
-            .background(color = Color.LightGray)
-        ) {
-//            selectedFood?.let {
-//                Text(
-//                    text = "선택된 음식: ${it.foodName}",
-//                    style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold)
-//                )
-//                Spacer(modifier = spaceModifier)
-//                Text(
-//                    text = "선택된 음식의 칼로리: ${it.kcal}",
-//                    style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold)
-//                )
-//            }
-            remainingKcal(remainKcal, remainNutrient.carbohydrate, remainNutrient.protein, remainNutrient.fat)
+        if(searchStr == "") {
+            Column(
+                modifier = Modifier
+                    .padding(10.dp)
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .background(color = Color.Gray)
+            ) {
+                remainingKcal(remainKcal, remainNutrient.carbohydrate, remainNutrient.protein, remainNutrient.fat)
+            }
         }
+
+//        Column (modifier = Modifier
+//            .padding(10.dp)
+//            .align(Alignment.BottomStart)
+//            .fillMaxWidth()
+//            .background(color = Color.LightGray)
+//        ) {
+////            selectedFood?.let {
+////                Text(
+////                    text = "선택된 음식: ${it.foodName}",
+////                    style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold)
+////                )
+////                Spacer(modifier = spaceModifier)
+////                Text(
+////                    text = "선택된 음식의 칼로리: ${it.kcal}",
+////                    style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold)
+////                )
+////            }
+//            remainingKcal(remainKcal, remainNutrient.carbohydrate, remainNutrient.protein, remainNutrient.fat)
+//        }
         if(openDialog) {
             GramsInputDialog(
                 onDismiss = { openDialog = false },
@@ -215,57 +312,6 @@ fun todayEating(person: Person, eatingViewModel: EatingViewModel, searchViewMode
                     }
                 }
 
-            )
-        }
-    }
-}
-
-
-@Composable
-fun searchBar(searchStr: String, onValueChange: (String) -> Unit, onSearch: () -> Unit) {
-
-//    val keyboardController = LocalSoftwareKeyboardController.current
-//
-//    TextField(
-//        value = searchStr,
-//        onValueChange = onSearch,
-//        leadingIcon = {
-//            Icon(
-//               Icons.Default.Search,
-//                contentDescription = null
-//            )
-//        },
-//        keyboardOptions = KeyboardOptions.Default.copy(
-//            imeAction = ImeAction.Search
-//        ),
-//        keyboardActions = KeyboardActions(onDone = {
-//            keyboardController?.hide()
-//        }),
-//    )
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        OutlinedTextField(
-            value = searchStr,
-            onValueChange = { onValueChange(it) },
-            label = { Text("Search Food") },
-            modifier = Modifier
-                .weight(1f)
-                .height(IntrinsicSize.Min),
-        )
-
-        Spacer(modifier = Modifier.width(8.dp))
-
-        Button(
-            onClick = { onSearch() },
-            modifier = Modifier.height(IntrinsicSize.Min)
-//                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3F51B5))
-        ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(id = R.drawable.baseline_search_24),
-                contentDescription = "Search",
-                tint = Color.White
             )
         }
     }

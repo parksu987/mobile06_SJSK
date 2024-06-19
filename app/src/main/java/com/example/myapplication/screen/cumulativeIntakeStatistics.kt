@@ -1,5 +1,6 @@
 package com.example.myapplication.screen
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,7 +14,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -36,7 +39,10 @@ import java.time.format.DateTimeFormatter
 fun cumulativeIntakeStatistics(kcal:Int, carbohydrate:Double, protein:Double, fat:Double, intake:Map<String, Nutrient>, onClick:()->Unit) {
 
     val days = intake.keys.toList()
-    val CarbohydrateIntakeStatistics = intake.values.map { it.carbohydrate }
+    val CarbohydrateIntakeStatistics = intake.values.map {
+        Log.d("cumulativeIntakeStatistics", "carbohydrate: ${it.carbohydrate}")
+        it.carbohydrate
+    }
     val ProteinIntakeStatistics = intake.values.map { it.protein }
     val FatIntakeStatistics = intake.values.map { it.fat }
 
@@ -47,7 +53,9 @@ fun cumulativeIntakeStatistics(kcal:Int, carbohydrate:Double, protein:Double, fa
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(15.dp),
     ){
-        Box( modifier = Modifier.fillMaxWidth().padding(top = 10.dp)) {
+        Box( modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 10.dp)) {
             Icon(
                 imageVector = Icons.Default.Close,
                 contentDescription = null,

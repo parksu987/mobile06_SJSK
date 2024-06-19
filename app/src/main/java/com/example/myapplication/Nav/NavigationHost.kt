@@ -60,6 +60,7 @@ fun NavigationHost(navController:NavHostController,
                     person,
                     eatingViewModel = eatingViewModel,
                     searchViewModel = searchViewModel,
+                    loginViewModel
                 )
             } else {
                 Log.d("todayEating", "No user data")
