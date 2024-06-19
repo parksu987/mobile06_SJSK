@@ -47,11 +47,6 @@ class LoginViewModel(private val repository: LoginRepository): ViewModel() {
                 _person.value = person
                 _loginStatus.value =
                     if (person != null) {
-                        val saveWorkManager = SaveWorkManager().apply {
-                            this.context = this@LoginViewModel.context
-                        }
-                        saveWorkManager.enqueueWorkRequest()
-
                         LoginStatus.SUCCESS
                     } else {
                         LoginStatus.FAILURE
@@ -77,13 +72,17 @@ class LoginViewModel(private val repository: LoginRepository): ViewModel() {
         }
     }
 
-//    fun updatePersonIntake(intake: Map<String, Nutrient>) {
-//        repository.addPersonIntake(intake)
-//    }
-//
-//    fun updatePersonNutrient(kcal: Int, nutrient: Nutrient) {
-//        repository.updatePersonNutrient(kcal, nutrient)
-//    }
+    fun updatePersonIntake(id:String, intake: Map<String, Nutrient>) {
+        repository.addPersonIntake(id, intake)
+    }
+
+    fun updatePersonNutrient(id: String, kcal: Int, nutrient: Nutrient) {
+        repository.updatePersonNutrient(id, kcal, nutrient)
+    }
+
+    fun updatePersonInfo(id: String, person: Person) {
+        repository.updatePersonInfo(id, person)
+    }
 }
 
 enum class LoginStatus {

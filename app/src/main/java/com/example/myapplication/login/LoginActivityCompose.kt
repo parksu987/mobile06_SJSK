@@ -1,10 +1,14 @@
 package com.example.myapplication.login
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.SharedPreferences
+import android.widget.CheckBox
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -36,7 +40,7 @@ import com.example.myapplication.viewmodel.LoginViewModel
 fun LoginActivityCompose(navController: NavController, viewModel : LoginViewModel) {
     var id by rememberSaveable { mutableStateOf("") }
     var pw by rememberSaveable { mutableStateOf("") }
-
+    var autoLogin = false
     val loginStatus by viewModel.loginStatus.collectAsState()
     var loginAttempted by remember { mutableStateOf(false) } // 로그인 시도 여부를 추적
 

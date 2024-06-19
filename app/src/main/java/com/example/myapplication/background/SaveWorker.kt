@@ -2,63 +2,85 @@ package com.example.myapplication.background
 
 import android.content.Context
 import android.util.Log
-import androidx.compose.runtime.collectAsState
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
+import androidx.work.ListenableWorker
+import androidx.work.Worker
+import androidx.work.WorkerFactory
 import androidx.work.WorkerParameters
 import com.example.myapplication.DB.Nutrient
-import com.example.myapplication.roomDB.Eating
-import com.example.myapplication.roomDB.EatingDatabase
-import com.example.myapplication.viewmodel.EatingRepository
 import com.example.myapplication.viewmodel.EatingViewModel
-import com.example.myapplication.viewmodel.LoginRepository
 import com.example.myapplication.viewmodel.LoginViewModel
-import com.example.myapplication.viewmodel.PersonRepository
-import com.example.myapplication.viewmodel.PersonViewModel
-import com.google.firebase.database.ktx.database
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.flow.MutableStateFlow
 import java.time.LocalDate
+import javax.inject.Inject
+import javax.inject.Provider
 
 @HiltWorker
 class SaveWorker @AssistedInject constructor(
     @Assisted ctx:Context,
     @Assisted params: WorkerParameters,
-    private var personViewModel: PersonViewModel,
+    private var loginViewModel: LoginViewModel,
     private var eatingViewModel: EatingViewModel
-) : CoroutineWorker(ctx, params) {
-    override suspend fun doWork(): Result {
+) : Worker(ctx, params) {
+    override fun doWork(): Result {
         return try {
-            var eating = eatingViewModel.todayEating
+            val today = LocalDate.now().minusDays(1).toString()
+            var eatingList = eatingViewModel.todayEating.value
 
-            var todayCarbohydrate = .0
-            var todayProtein = .0
-            var todayFat = .0
-
-            for(e in eating.value){
-                todayCarbohydrate += (e.carbohydrate * (e.gram/100))
-                todayProtein += (e.protein * (e.gram/100))
-                todayFat += (e.fat * (e.gram/100))
-            }
-
-            if(todayCarbohydrate == .0 && todayProtein == .0 && todayFat == .0){  //오늘 사용자가 todayEating을 쓰지 않았을 경우
+            if(eatingList.isEmpty()){
                 return Result.success()
             }
 
-            val today = LocalDate.now().minusDays(1).toString()
-            personViewModel.updatePersonIntake(mapOf(today to Nutrient(todayCarbohydrate, todayProtein, todayFat)))
+            var nutrientMap = mutableMapOf<String, Nutrient>()
+
+            for(e in eatingList){
+                if(nutrientMap.containsKey(e.personId)){  //id값이 있는 경우, 기존 영양성분에 더하기
+                    val nutrient = nutrientMap[e.personId]!!
+                    nutrientMap[e.personId] = Nutrient(
+                        nutrient.carbohydrate + (e.carbohydrate * (e.gram/100)),
+                        nutrient.protein + (e.protein * (e.gram/100)),
+                        nutrient.fat + (e.fat * (e.gram/100))
+                    )
+                } else {
+                    nutrientMap[e.personId] = Nutrient(
+                        e.carbohydrate * (e.gram/100),
+                        e.protein * (e.gram/100),
+                        e.fat * (e.gram/100)
+                    )
+                }
+            }
+
+            for(n in nutrientMap){
+                loginViewModel.updatePersonIntake(n.key, mapOf(today to n.value))
+            }
 
             eatingViewModel.deleteAllEating()
 
-            Log.d("todayEating", "skf")
+            Log.d("workManager", "skf")
 
             Result.success()
         } catch (e:Exception){
             Result.failure()
         }
     }
+
+//    class Factory @Inject constructor(
+//        private val loginViewModelProvider: Provider<LoginViewModel>,
+//        private val eatingViewModelProvider: Provider<EatingViewModel>
+//    ) : WorkerFactory() {
+//        override fun createWorker(
+//            appContext: Context,
+//            workerClassName: String,
+//            workerParameters: WorkerParameters
+//        ): ListenableWorker? {
+//            return SaveWorker(
+//                appContext,
+//                workerParameters,
+//                loginViewModelProvider.get(),
+//                eatingViewModelProvider.get()
+//            )
+//        }
+//    }
 }

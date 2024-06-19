@@ -16,18 +16,30 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.myapplication.DB.Person
+import com.example.myapplication.viewmodel.LoginViewModel
+import com.example.myapplication.viewmodel.PersonViewModel
 
 @Composable
-fun myPage(person: Person, logout: () -> Unit) {
+fun myPage(person: Person, loginViewModel: LoginViewModel, logout: () -> Unit) {
     val spacerModifier = Modifier.height(30.dp)
     val buttonRowModifier = Modifier.background(Color.LightGray)
 
     var cumulativeIntakeStaticScreen by remember {
         mutableStateOf(false)
     }
+    var changeMyInfoScreen by remember {
+        mutableStateOf(false)
+    }
 
     if(cumulativeIntakeStaticScreen)
         cumulativeIntakeStatistics(person.kcal, person.carbohydrate, person.protein, person.fat, person.intake, {cumulativeIntakeStaticScreen = false})
+    else if(changeMyInfoScreen)
+        changeMyInfo(person, {
+            changeMyInfoScreen = false
+        }, {
+            changeMyInfoScreen = false
+            loginViewModel.updatePersonInfo(person.id, person)}
+        )
     else {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
@@ -48,7 +60,7 @@ fun myPage(person: Person, logout: () -> Unit) {
             Row {
                 myPageButton(text = "누적 섭취 기록") { cumulativeIntakeStaticScreen = true }
                 Spacer(modifier = Modifier.width(20.dp))
-                myPageButton(text = "내 정보 수정") {}
+                myPageButton(text = "내 정보 수정") { changeMyInfoScreen = true }
             }
             Spacer(modifier = Modifier.height(10.dp))
             Row {

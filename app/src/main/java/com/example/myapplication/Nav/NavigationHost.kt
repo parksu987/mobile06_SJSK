@@ -18,11 +18,18 @@ import com.example.myapplication.compare.MainCompare
 import com.example.myapplication.compare.ProductViewModel
 import com.example.myapplication.login.LoginActivityCompose
 import com.example.myapplication.login.SignupActivityCompose
+import com.example.myapplication.screen.SearchScreen
 import com.example.myapplication.viewmodel.LoginViewModel
+import com.example.myapplication.viewmodel.SearchViewModel
 import java.time.LocalDate
 
 @Composable
-fun NavigationHost(navController:NavHostController, eatingViewModel: EatingViewModel, productViewModel: ProductViewModel, loginViewModel: LoginViewModel) {
+fun NavigationHost(navController:NavHostController,
+                   eatingViewModel: EatingViewModel,
+                   productViewModel: ProductViewModel,
+                   loginViewModel: LoginViewModel,
+                    searchViewModel: SearchViewModel
+) {
     val date = LocalDate.now()
     val intake = mapOf<String, Nutrient>(
         date.toString()  to Nutrient(150.0, 40.0, 30.0)
@@ -36,7 +43,7 @@ fun NavigationHost(navController:NavHostController, eatingViewModel: EatingViewM
         startDestination = NavRoutes.Login.route
     ){
         composable(NavRoutes.Home.route){
-            Home()
+            SearchScreen(searchViewModel, navController)
         }
         composable(NavRoutes.Comparison.route){
             MainCompare(productViewModel)
@@ -50,9 +57,9 @@ fun NavigationHost(navController:NavHostController, eatingViewModel: EatingViewM
         composable(NavRoutes.TodayEating.route){
             if (person != null) {
                 todayEating(
-                    kcal = person.kcal,
-                    carbohydrate = person.carbohydrate, protein = person.protein, fat = person.fat,
-                    eatingViewModel = eatingViewModel
+                    person,
+                    eatingViewModel = eatingViewModel,
+                    searchViewModel = searchViewModel,
                 )
             } else {
                 Log.d("todayEating", "No user data")
@@ -61,7 +68,7 @@ fun NavigationHost(navController:NavHostController, eatingViewModel: EatingViewM
         composable(NavRoutes.MyPage.route) {
 
             if (person != null) {
-                myPage(person, { })
+                myPage(person, loginViewModel, { })
             } else {
                 Log.d("MyPage", "No user data")
             }

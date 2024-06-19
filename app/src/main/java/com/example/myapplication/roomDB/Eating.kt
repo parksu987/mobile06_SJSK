@@ -8,10 +8,10 @@ data class Eating(
     @PrimaryKey(autoGenerate = false)
     val foodCode: String = "",
     val foodName: String,
-    val foodType: Int,
-    var kcal: Int,
-    var carbohydrate: Int,
-    var protein: Int,
-    var fat: Int,
-    var gram: Double
+    var kcal: Double,
+    var carbohydrate: Double,
+    var protein: Double,
+    var fat: Double,
+    var gram: Double,
+    var personId : String
 )

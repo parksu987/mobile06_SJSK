@@ -22,6 +22,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.Nav.BottomNavigationBar
 import com.example.myapplication.Nav.NavigationHost
+import com.example.myapplication.firestore.RetrofitClient
 import com.example.myapplication.roomDB.EatingDatabase
 import com.example.myapplication.viewmodel.EatingRepository
 import com.example.myapplication.viewmodel.EatingViewModel
@@ -30,6 +31,9 @@ import com.example.myapplication.viewmodel.LoginRepository
 import com.example.myapplication.viewmodel.LoginStatus
 import com.example.myapplication.viewmodel.LoginViewModel
 import com.example.myapplication.viewmodel.LoginViewModelFactory
+import com.example.myapplication.viewmodel.Repository
+import com.example.myapplication.viewmodel.SearchViewModel
+import com.example.myapplication.viewmodel.ViewModelFactory
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
@@ -54,6 +58,12 @@ fun MainScreen(navController: NavHostController) {
     val eatingdb = EatingDatabase.getEatingDatabase(context)
     val eatingViewModel: EatingViewModel = viewModel(factory = EatingViewModelFactory(  EatingRepository(eatingdb)  ) )
     val db = Firebase.firestore
+
+    val searchViewModel: SearchViewModel = viewModel(factory = ViewModelFactory(
+        Repository(
+        RetrofitClient.instance)
+        )
+    )
 
 
     CompositionLocalProvider(
@@ -87,7 +97,8 @@ fun MainScreen(navController: NavHostController) {
                     navController = navController,
                     eatingViewModel = eatingViewModel,
                     productViewModel = viewModel(),
-                    loginViewModel
+                    loginViewModel,
+                    searchViewModel
                 )
             }
         }

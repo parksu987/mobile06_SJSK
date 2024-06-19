@@ -28,10 +28,13 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.ku.MainScreen
+import com.example.myapplication.DB.Person
+import com.example.myapplication.background.SaveWorkManager
 import com.example.myapplication.compare.MultiNutrientBarChart
 import com.example.myapplication.compare.Product
 import com.example.myapplication.compare.ProductList
 import com.example.myapplication.compare.ProductViewModel
+import com.example.myapplication.screen.changeMyInfo
 //import com.example.myapplication.notification.FetchAndNotifyWorker
 //import com.example.myapplication.notification.utils.scheduleDailyUpdate
 import com.example.myapplication.ui.theme.MyApplicationTheme
@@ -154,9 +157,14 @@ class MainActivity : ComponentActivity() {
 
                     val navController = rememberNavController()
                     MainScreen(navController)
+//                    val p = Person("sj", "1234", "sj", 24, 153.3, 41.1, 2000, 100.0, 50.0, 40.0, mapOf())
+
                 }
             }
         }
+        val saveWorkManager = SaveWorkManager()
+        saveWorkManager.context = this
+        saveWorkManager.enqueueWorkRequest()
     }
 }
 
