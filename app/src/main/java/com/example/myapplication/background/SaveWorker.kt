@@ -1,6 +1,7 @@
 package com.example.myapplication.background
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.collectAsState
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
@@ -27,7 +28,7 @@ import java.time.LocalDate
 class SaveWorker @AssistedInject constructor(
     @Assisted ctx:Context,
     @Assisted params: WorkerParameters,
-    private var loginViewModel: LoginViewModel,
+    private var personViewModel: PersonViewModel,
     private var eatingViewModel: EatingViewModel
 ) : CoroutineWorker(ctx, params) {
     override suspend fun doWork(): Result {
@@ -49,9 +50,11 @@ class SaveWorker @AssistedInject constructor(
             }
 
             val today = LocalDate.now().minusDays(1).toString()
-            loginViewModel.updatePersonIntake(mapOf(today to Nutrient(todayCarbohydrate, todayProtein, todayFat)))
+            personViewModel.updatePersonIntake(mapOf(today to Nutrient(todayCarbohydrate, todayProtein, todayFat)))
 
             eatingViewModel.deleteAllEating()
+
+            Log.d("todayEating", "skf")
 
             Result.success()
         } catch (e:Exception){

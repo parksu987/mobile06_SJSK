@@ -1,18 +1,15 @@
 package com.example.myapplication
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -24,31 +21,28 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import com.example.ku.MainScreen
 import com.example.myapplication.compare.MultiNutrientBarChart
-import com.example.myapplication.compare.NotificationApp
 import com.example.myapplication.compare.Product
 import com.example.myapplication.compare.ProductList
 import com.example.myapplication.compare.ProductViewModel
-import com.example.myapplication.login.LoginActivityCompose
-import com.example.myapplication.login.SignupActivityCompose
+//import com.example.myapplication.notification.FetchAndNotifyWorker
+//import com.example.myapplication.notification.utils.scheduleDailyUpdate
 import com.example.myapplication.ui.theme.MyApplicationTheme
 import com.example.myapplication.viewmodel.LoginRepository
 import com.example.myapplication.viewmodel.LoginViewModel
 import com.example.myapplication.viewmodel.LoginViewModelFactory
-import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.example.myapplication.ui.theme.MyApplicationTheme
+import java.time.Duration
+import java.time.LocalDateTime
+import java.util.concurrent.TimeUnit
 
 
 class MainActivity : ComponentActivity() {
@@ -155,43 +149,54 @@ class MainActivity : ComponentActivity() {
                             )
                         )
                     }
-                    // Display the list of products
-//                    ProductList(products)
-//                    MultiNutrientBarChart(products)
 
-                    //val viewmodel: ProductViewModel = viewModel() // ViewModel 인스턴스 생성
-                    //MainContent(viewmodel = viewmodel) // ViewModel을 MainContent로 전달
-                    //NotificationApp()
-
+                    //setupPeriodicWork(this)
 
                     val navController = rememberNavController()
-                    val db = Firebase.firestore
-
-                    val loginViewModel: LoginViewModel = viewModel(
-                        factory = LoginViewModelFactory(
-                            LoginRepository(db)
-                        )
-                    )
-
-
-                    NavHost(navController = navController, startDestination = "login") {
-                        composable("login") { LoginActivityCompose(navController, loginViewModel) }
-                        composable("signup") {
-                            SignupActivityCompose(
-                                navController,
-                                loginViewModel
-                            )
-                        }
-                    }
-                    val viewmodel: ProductViewModel = viewModel() // ViewModel 인스턴스 생성
-                    //MainContent(viewmodel = viewmodel) // ViewModel을 MainContent로 전달
-                    //NotificationApp()
+                    MainScreen(navController)
                 }
             }
         }
     }
 }
 
+
+//private fun setupPeriodicWork(context: Context) {
+//    // 테스트를 위해 10초 후에 작업을 실행하도록 설정
+//    val initialDelay = 17L // 10초 후 실행
+//
+////    val periodicWorkRequest = PeriodicWorkRequestBuilder<FetchAndNotifyWorker>(1, TimeUnit.DAYS)
+//        .setInitialDelay(initialDelay, TimeUnit.SECONDS)
+//        .build()
+//
+//    WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+//        "daily_notification_work",
+//        ExistingPeriodicWorkPolicy.KEEP,
+//        periodicWorkRequest
+//    )
+//}
+
+//private fun setupPeriodicWork(context: Context) {
+//    // 지연 시간 계산: 예를 들어, 매일 오전 10시에 작업을 실행하고자 할 경우
+//    val targetHour = 10
+//    val currentDateTime = LocalDateTime.now()
+//    val targetDateTime = currentDateTime.withHour(targetHour).withMinute(0).withSecond(0).withNano(0)
+//    val initialDelay = if (currentDateTime <= targetDateTime) {
+//        Duration.between(currentDateTime, targetDateTime).toMinutes()
+//    } else {
+//        Duration.between(currentDateTime, targetDateTime.plusDays(1)).toMinutes()
+//    }
+//
+//    val periodicWorkRequest = PeriodicWorkRequestBuilder<FetchAndNotifyWorker>(1, TimeUnit.DAYS)
+//        .setInitialDelay(initialDelay, TimeUnit.MINUTES)
+//        .build()
+//
+//    WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+//        "daily_notification_work",
+//        ExistingPeriodicWorkPolicy.KEEP,
+//        periodicWorkRequest
+//    )
+//}
 
 @Composable
 fun MainContent(viewmodel: ProductViewModel = viewModel()) {

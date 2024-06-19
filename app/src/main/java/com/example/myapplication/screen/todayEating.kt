@@ -1,7 +1,9 @@
 package com.example.myapplication.screen
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,6 +43,7 @@ import com.example.myapplication.DB.Nutrient
 import com.example.myapplication.roomDB.Eating
 import com.example.myapplication.viewmodel.EatingViewModel
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun todayEating(kcal: Int,carbohydrate: Double, protein: Double, fat: Double, eatingViewModel: EatingViewModel) {
     val spaceModifier = Modifier.height(25.dp)
@@ -61,7 +64,9 @@ fun todayEating(kcal: Int,carbohydrate: Double, protein: Double, fat: Double, ea
     remainKcal = remain.keys.first()
     remainNutrient = remain.values.first()
 
-    var flag = false
+    var flag by remember {
+        mutableStateOf(false)
+    }
     var openDialog by remember {
         mutableStateOf(false)
     }
@@ -131,9 +136,15 @@ fun todayEating(kcal: Int,carbohydrate: Double, protein: Double, fat: Double, ea
             }
 
             else {
-                val eatingList by eatingViewModel.todayEating.collectAsState(initial = emptyList())
+                val eatingList by eatingViewModel.todayEating.collectAsState()
+
                 EatingList(list = eatingList)
+                for(eating in eatingList) {
+                    Log.d("todayEating", "eating: $eating")
+                }
+
             }
+
         }
 
         Column (modifier = Modifier
@@ -161,23 +172,31 @@ fun todayEating(kcal: Int,carbohydrate: Double, protein: Double, fat: Double, ea
                 onConfirm = { grams ->
                     if (newEating != null) {
                         newEating!!.gram = newEating!!.gram!!.plus(grams.toDouble())
-                        Log.d("todayEating", "newEating: $newEating")
-                        Log.d("todayEating", "newEating gram: ${newEating!!.gram}")
-                        if(flag) {
+
+                        Log.d("todayEating", "flag: ${flag}")
+                        if(!flag) {
                             eatingViewModel.saveEating(newEating!!)
                             Log.d("todayEating", "saveEating")
                         }
                         else {
                             eatingViewModel.updateEating(newEating!!)
+
                             Log.d("todayEating", "updateEating")
                         }
+                        Log.d("todayEating", "todayEating: ${eatingViewModel.todayEating.value}")
+                        Log.d("todayEating", "todayEating: ${eatingViewModel.todayEating.value.size}")
+
                         searchStr = ""
                         openDialog = false
+                        for(it in eatingViewModel.todayEating.value) {
+                            Log.d("todayEating", "todayEating: ${it.toString()}")
+                        }
                     }
                     else {
                         Log.d("todayEating", "newEating is null")
                     }
                 }
+
             )
         }
     }

@@ -2,6 +2,7 @@ package com.example.myapplication.viewmodel
 
 import com.example.myapplication.roomDB.Eating
 import com.example.myapplication.roomDB.EatingDatabase
+import kotlinx.coroutines.flow.Flow
 
 class EatingRepository(private val db: EatingDatabase) {
     val dao = db.getDao()
