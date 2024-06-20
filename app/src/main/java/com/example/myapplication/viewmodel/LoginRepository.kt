@@ -27,10 +27,13 @@ class LoginRepository(private val db: FirebaseFirestore) {
             //val intakeData = intakeSnapshot.data as? Map<String, Map<String, Any>>
             person?.intake = intakeSnapshot.documents.map { document ->
                 val data = document.data
+//                Log.d("로그인", "id:${document.id} intakeData: $data")
+                val nut = data?.get("${document.id}") as? Map<String, Any>
+
                 val nutrient = Nutrient(
-                    carbohydrate = data?.get("carbohydrate") as? Double ?: 0.0,
-                    protein = data?.get("protein") as? Double ?: 0.0,
-                    fat = data?.get("fat") as? Double ?: 0.0
+                    carbohydrate = nut?.get("carbohydrate") as? Double ?: 0.0,
+                    protein = nut?.get("protein") as? Double ?: 0.0,
+                    fat = nut?.get("fat") as? Double ?: 0.0,
                 )
                 Log.d("로그인", "id:${document.id} intakeData: $nutrient")
                 document.id to nutrient
