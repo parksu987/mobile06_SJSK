@@ -54,14 +54,13 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.input.key.Key.Companion.U
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.myapplication.R
 //import org.apache.commons.math3.stat.descriptive.summary.Product
 import kotlin.math.round
-import kotlin.math.roundToInt
-import com.example.myapplication.compare.ProductViewModel
+import com.example.myapplication.viewmodel.ProductViewModel
 import com.example.myapplication.compare.Product
 import kotlinx.coroutines.launch
 
@@ -76,10 +75,9 @@ fun isInternetAvailable(context: Context): Boolean {
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun SearchScreen(viewModel: SearchViewModel, navController: NavHostController) {
-    val productViewModel: ProductViewModel = viewModel()  // ProductViewModel 인스턴스 가져오기
+fun SearchScreen(searchViewModel: SearchViewModel, productViewModel: ProductViewModel, navController: NavHostController) {
+    val keyboardController = LocalSoftwareKeyboardController.current
     val snackbarHostState = remember { SnackbarHostState() }  // Snackbar를 위한 ScaffoldState
-
     var searchText by remember { mutableStateOf("") }
     var searchClicked by remember { mutableStateOf(false) }
     val context = LocalContext.current
@@ -114,9 +112,10 @@ fun SearchScreen(viewModel: SearchViewModel, navController: NavHostController) {
 
                 Button(
                     onClick = {
+                        keyboardController?.hide()
                         if (isInternetAvailable(context)) {
                             searchClicked = true
-                            viewModel.searchFood(searchText)
+                            searchViewModel.searchFood(searchText)
                         } else {
                             coroutineScope.launch {
                                 snackbarHostState.showSnackbar(
@@ -139,12 +138,12 @@ fun SearchScreen(viewModel: SearchViewModel, navController: NavHostController) {
 
             Spacer(modifier = Modifier.height(30.dp))
 
-            val data by viewModel.data.collectAsState()
+            val data by searchViewModel.data.collectAsState()
             if (searchClicked && data != null ) {
                 Column {
-                    DataDisplay(data = data!!, searchText, navController, viewModel, productViewModel, snackbarHostState)
+                    DataDisplay(data = data!!, searchText, navController, searchViewModel, productViewModel, snackbarHostState)
                     Spacer(modifier = Modifier.height(8.dp))
-                    PageIndicator(viewModel)
+                    PageIndicator(searchViewModel)
                 }
             } else {
                 Text("No items available")
@@ -155,7 +154,7 @@ fun SearchScreen(viewModel: SearchViewModel, navController: NavHostController) {
 }
 
 @Composable
-fun DataDisplay(data: ApiResponse, searchText: String, navController: NavHostController, viewModel: SearchViewModel, productViewModel: ProductViewModel, snackbarHostState: SnackbarHostState){
+fun DataDisplay(data: ApiResponse, searchText: String, navController: NavHostController, searchViewModel: SearchViewModel, productViewModel: ProductViewModel, snackbarHostState: SnackbarHostState){
 
     if (data.body?.items?.isNotEmpty() == true) {  // 데이터가 있을 때
         LazyColumn {
@@ -180,7 +179,7 @@ fun DataDisplay(data: ApiResponse, searchText: String, navController: NavHostCon
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clickable {
-                                    viewModel.selectItem(item)
+                                    searchViewModel.selectItem(item)
                                     navController.navigate("detail")
                                 },
                             verticalAlignment = Alignment.CenterVertically
@@ -223,7 +222,7 @@ fun DataDisplay(data: ApiResponse, searchText: String, navController: NavHostCon
 
                                     coroutineScope.launch {
                                         snackbarHostState.showSnackbar(
-                                            message = "비교함에 잘 담겼습니다.",
+                                            message = "비교함에 담겼습니다.",
                                             duration = SnackbarDuration.Short
                                         )
                                     }

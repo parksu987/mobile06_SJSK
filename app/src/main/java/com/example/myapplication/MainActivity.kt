@@ -25,7 +25,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.ku.MainScreen
 import com.example.myapplication.compare.MultiNutrientBarChart
 import com.example.myapplication.compare.ProductList
-import com.example.myapplication.compare.ProductViewModel
+import com.example.myapplication.viewmodel.ProductViewModel
 //import com.example.myapplication.notification.FetchAndNotifyWorker
 //import com.example.myapplication.notification.utils.scheduleDailyUpdate
 import com.example.myapplication.ui.theme.MyApplicationTheme
@@ -186,25 +186,25 @@ class MainActivity : ComponentActivity() {
 //    )
 //}
 
-@Composable
-fun MainContent(viewmodel: ProductViewModel = viewModel()) {
-    Column(modifier = Modifier.padding(16.dp)) {
-        // Example of toggling views
-        var showDetails by remember { mutableStateOf(true) }
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Button(onClick = { showDetails = true }) {
-                Text("제품 자세히 보기")
-            }
-            Button(onClick = { showDetails = false }) {
-                Text("성분별 순위 보기")
-            }
-        }
-
-        if (showDetails) {
-            ProductList(products = viewmodel.products, viewModel = viewmodel)
-        } else {
-
-            MultiNutrientBarChart(products = viewmodel.products, viewModel = viewmodel)
-        }
-    }
-}
+//@Composable
+//fun MainContent(viewmodel: ProductViewModel = viewModel()) {
+//    Column(modifier = Modifier.padding(16.dp)) {
+//        // Example of toggling views
+//        var showDetails by remember { mutableStateOf(true) }
+//        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+//            Button(onClick = { showDetails = true }) {
+//                Text("제품 자세히 보기")
+//            }
+//            Button(onClick = { showDetails = false }) {
+//                Text("성분별 순위 보기")
+//            }
+//        }
+//
+//        if (showDetails) {
+//            ProductList(products = viewmodel.products, viewModel = viewmodel)
+//        } else {
+//
+//            MultiNutrientBarChart(products = viewmodel.products, viewModel = viewmodel)
+//        }
+//    }
+//}
