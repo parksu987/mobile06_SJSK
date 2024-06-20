@@ -10,14 +10,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.myapplication.DB.Food
 import com.example.myapplication.DB.Nutrient
-import com.example.myapplication.DB.Person
 import com.example.myapplication.screen.myPage
 import com.example.myapplication.screen.todayEating
 import com.example.myapplication.viewmodel.EatingViewModel
 import com.example.myapplication.compare.MainCompare
-import com.example.myapplication.compare.ProductViewModel
+import com.example.myapplication.viewmodel.ProductViewModel
 import com.example.myapplication.login.LoginActivityCompose
 import com.example.myapplication.login.SignupActivityCompose
 import com.example.myapplication.screen.SearchScreen
@@ -31,7 +29,7 @@ fun NavigationHost(navController:NavHostController,
                    eatingViewModel: EatingViewModel,
                    productViewModel: ProductViewModel,
                    loginViewModel: LoginViewModel,
-                    searchViewModel: SearchViewModel
+                   searchViewModel: SearchViewModel
 ) {
     val date = LocalDate.now()
 
@@ -55,7 +53,7 @@ fun NavigationHost(navController:NavHostController,
         startDestination = NavRoutes.Login.route
     ){
         composable(NavRoutes.Home.route){
-            SearchScreen(searchViewModel, navController)
+            SearchScreen(searchViewModel, productViewModel, navController)
         }
         composable(NavRoutes.Comparison.route){
             MainCompare(productViewModel)

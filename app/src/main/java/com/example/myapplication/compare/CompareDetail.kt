@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -35,6 +36,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.myapplication.viewmodel.ProductViewModel
 import kotlinx.coroutines.launch
 
 data class Product(
@@ -61,7 +63,8 @@ val dailyIntakeStandards = mapOf(
 )
 
 @Composable
-fun ProductList(products: List<Product>, viewModel: ProductViewModel) {
+fun ProductList(viewModel: ProductViewModel)  {
+    val products by viewModel.products.collectAsState()  // StateFlow 구독
     val state = rememberLazyListState()
     val scope = rememberCoroutineScope()
     var showDialog by remember { mutableStateOf(false) }
