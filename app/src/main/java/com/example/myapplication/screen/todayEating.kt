@@ -3,6 +3,7 @@ package com.example.myapplication.screen
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -54,6 +55,7 @@ import com.example.myapplication.viewmodel.EatingViewModel
 import com.example.myapplication.viewmodel.LoginViewModel
 import com.example.myapplication.viewmodel.SearchViewModel
 import java.time.LocalDate
+import kotlin.math.round
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
@@ -109,7 +111,7 @@ fun todayEating(person: Person, eatingViewModel: EatingViewModel, searchViewMode
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row {
-                Text(text = "오늘 섭취한 칼로리 기록", fontSize = 35.sp, fontWeight = FontWeight.ExtraBold)
+                Text(text = "오늘 섭취한 칼로리 기록", fontSize = 30.sp, fontWeight = FontWeight.ExtraBold)
                 Icon(
                     Icons.Default.SaveAs,
                     contentDescription = "save",
@@ -323,16 +325,16 @@ fun remainingKcal(kcal: Int, carbohydrate: Double, protein: Double, fat: Double)
 
     Row (
         modifier = Modifier
-            .padding(10.dp)
             .fillMaxWidth()
-            .background(color = Color.LightGray)
-            .padding(15.dp),
+            .border(10.dp, Color(0xFFECF284))
+            .background(color = Color(0xFF9DCD5A))
+            .padding(30.dp),
         horizontalArrangement = Arrangement.SpaceAround,
         verticalAlignment = Alignment.CenterVertically
     ){
         Column {
-            Text(text = "남은 권장 칼로리", fontSize = 23.sp, fontWeight = FontWeight.ExtraBold)
-            Text(text = "${kcal}kcal", fontSize = 35.sp)
+            Text(text = "남은 권장 칼로리", fontSize = 20.sp, fontWeight = FontWeight.ExtraBold)
+            Text(text = "${kcal}kcal", fontSize = 32.sp)
         }
         Spacer(modifier = Modifier.width(20.dp))
         Column {
@@ -341,21 +343,21 @@ fun remainingKcal(kcal: Int, carbohydrate: Double, protein: Double, fat: Double)
                 horizontalArrangement = Arrangement.SpaceAround,
             ) {
                 Text(text = "탄수화물", fontSize = 17.sp)
-                Text(text ="${carbohydrate}g", fontSize = 17.sp)
+                Text(text ="${carbohydrate.let { round(it*100) /100 }}g", fontSize = 17.sp)
             }
             Row (
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceAround,
             ){
                 Text(text = "단백질", fontSize = 17.sp)
-                Text(text = "${protein}g", fontSize = 17.sp)
+                Text(text = "${protein.let { round(it*100) /100 }}g", fontSize = 17.sp)
             }
             Row (
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceAround,
             ){
                 Text(text = "지방", fontSize = 17.sp)
-                Text(text = "${fat}g", fontSize = 17.sp)
+                Text(text = "${fat.let { round(it*100) /100 }}g", fontSize = 17.sp)
             }
         }
     }

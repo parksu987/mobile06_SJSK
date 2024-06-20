@@ -63,6 +63,7 @@ fun SignupActivityCompose(navController: NavController, viewModel: LoginViewMode
         BackButton(navController)
 
         Text("계정 만들기", fontSize = 20.sp, color = Color.Gray,  fontWeight = FontWeight.Bold)
+        Spacer(modifier = Modifier.height(16.dp))
 
         // ID 입력 필드와 중복 확인 버튼
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -71,18 +72,16 @@ fun SignupActivityCompose(navController: NavController, viewModel: LoginViewMode
                 onValueChange = { id = it },
                 label = { Text("아이디") },
                 placeholder = { Text("ID") },
-                modifier = Modifier.weight(3f)
+                modifier = Modifier.weight(1f)
             )
             Spacer(modifier = Modifier.width(8.dp))
-
-            Spacer(modifier = Modifier.height(16.dp))
 
             Button(
                 onClick = {
                     viewModel.checkIdDuplication(id)
                     idChecked = true
                 },
-                modifier = Modifier.padding(horizontal = 8.dp),
+                modifier = Modifier.align(Alignment.CenterVertically)
             ) {
                 Text("중복 확인")
             }
@@ -102,7 +101,8 @@ fun SignupActivityCompose(navController: NavController, viewModel: LoginViewMode
             value = pw,
             onValueChange = { pw = it },
             label = { Text("비밀번호") },
-            placeholder = { Text("비밀번호") }
+            placeholder = { Text("비밀번호") },
+            modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -110,7 +110,8 @@ fun SignupActivityCompose(navController: NavController, viewModel: LoginViewMode
             value = pwCheck,
             onValueChange = { pwCheck = it },
             label = { Text("비밀번호 확인") },
-            placeholder = { Text("비밀번호 확인") }
+            placeholder = { Text("비밀번호 확인") },
+            modifier = Modifier.fillMaxWidth()
         )
 
         // 비밀번호 확인 텍스트 필드에 값이 입력되었을 때만 비밀번호 일치 여부를 표시합니다.

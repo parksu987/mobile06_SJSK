@@ -48,14 +48,18 @@ import com.example.myapplication.firestore.ApiResponse
 import com.example.myapplication.firestore.Item
 import com.example.myapplication.viewmodel.SearchViewModel
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.input.key.Key.Companion.U
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.ImeAction
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.myapplication.R
 //import org.apache.commons.math3.stat.descriptive.summary.Product
@@ -74,6 +78,7 @@ fun isInternetAvailable(context: Context): Boolean {
     return networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun SearchScreen(viewModel: SearchViewModel, navController: NavHostController) {
@@ -94,60 +99,118 @@ fun SearchScreen(viewModel: SearchViewModel, navController: NavHostController) {
     ){
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color( 0xFF9DCD5A))
+                    .padding(10.dp),
+                horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                OutlinedTextField(
-                    value = searchText,
-                    onValueChange = {searchText = it},
-                    label = { Text("Search Food") },
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(IntrinsicSize.Min),
+                Text(
+                    text = "식전식KU🍴",
+                    color = Color(0xFFf37221),
+                    fontSize = 40.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    modifier = Modifier.padding(10.dp)
                 )
-
-                Spacer(modifier = Modifier.width(8.dp))
-
-                Button(
-                    onClick = {
-                        if (isInternetAvailable(context)) {
-                            searchClicked = true
-                            viewModel.searchFood(searchText)
-                        } else {
-                            coroutineScope.launch {
-                                snackbarHostState.showSnackbar(
-                                    message = "인터넷 연결을 확인해주세요.",
-                                    duration = SnackbarDuration.Short
-                                )
-                            }
-                        }
-                    },
-                    modifier = Modifier.height(IntrinsicSize.Min)
-//                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3F51B5))
-                ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.baseline_search_24),
-                        contentDescription = "Search",
-                        tint = Color.White
-                    )
-                }
             }
 
-            Spacer(modifier = Modifier.height(30.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
-            val data by viewModel.data.collectAsState()
-            if (searchClicked && data != null ) {
-                Column {
-                    DataDisplay(data = data!!, searchText, navController, viewModel, productViewModel, snackbarHostState)
-                    Spacer(modifier = Modifier.height(8.dp))
-                    PageIndicator(viewModel)
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+                    OutlinedTextField(
+                        value = searchText,
+                        onValueChange = { searchText = it },
+                        label = { Text("Search Food") },
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            containerColor = Color(0xFFE3F2FD), // Background color
+                            focusedBorderColor = Color(0xFF1E88E5), // Border color when focused
+                            unfocusedBorderColor = Color(0xFFBDBDBD) // Border color when not focused
+                        ),
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            imeAction = ImeAction.Search
+                        ),
+                        keyboardActions = KeyboardActions(onSearch = {
+                            if (isInternetAvailable(context)) {
+                                searchClicked = true
+                                viewModel.searchFood(searchText)
+                            } else {
+                                coroutineScope.launch {
+                                    snackbarHostState.showSnackbar(
+                                        message = "인터넷 연결을 확인해주세요.",
+                                        duration = SnackbarDuration.Short
+                                    )
+                                }
+                            }
+                        }),
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(16.dp),
+                    )
+
+                    Button(
+                        onClick = {
+                            if (isInternetAvailable(context)) {
+                                searchClicked = true
+                                viewModel.searchFood(searchText)
+                            } else {
+                                coroutineScope.launch {
+                                    snackbarHostState.showSnackbar(
+                                        message = "인터넷 연결을 확인해주세요.",
+                                        duration = SnackbarDuration.Short
+                                    )
+                                }
+                            }
+                        },
+                        modifier = Modifier
+                            .height(IntrinsicSize.Min)
+                            .padding(16.dp)
+                    ) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(id = R.drawable.baseline_search_24),
+                            contentDescription = "Search",
+                            tint = Color.White
+                        )
+                    }
                 }
-            } else {
-                Text("No items available")
+
+                if (searchClicked) {
+                    Spacer(modifier = Modifier.height(30.dp))
+                    val data by viewModel.data.collectAsState()
+                    if (data != null) {
+                        DataDisplay(
+                            data = data!!,
+                            searchText,
+                            navController,
+                            viewModel,
+                            productViewModel,
+                            snackbarHostState
+                        )
+                        PageIndicator(viewModel)
+                    } else {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text("No items available")
+                    }
+                } else {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text("Enter the product name")
+                }
             }
         }
     }
@@ -244,7 +307,7 @@ fun DataDisplay(data: ApiResponse, searchText: String, navController: NavHostCon
             }
         }
     } else {
-        Text("No items available")
+        Text("Enter the product name")
     }
 }
 

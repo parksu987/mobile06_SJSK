@@ -38,8 +38,8 @@ fun profile(name:String, age:Int, height: Double, weight: Double) {
             .fillMaxWidth()
             .wrapContentHeight()
             .padding(start = 14.dp, end = 14.dp)
-            .border(3.dp, color = Color.Red)
-            .background(Color.Gray)
+            .border(3.dp, color = Color.Black)
+            .background(Color(0xFFf8f9fd))
     ) {
         Box(
             modifier = Modifier.padding(14.dp)
@@ -74,8 +74,8 @@ fun myKcal(kcal:Int, fontSize:Int) {
             .fillMaxWidth()
             .wrapContentHeight()
             .padding(horizontal = 14.dp)
-            .border(BorderStroke(3.dp, Color.Red), CircleShape)
-            .background(Color.LightGray, CircleShape)
+            .border(BorderStroke(3.dp, Color.Black), CircleShape)
+            .background(Color(0xFFf8f9fd), CircleShape)
             .padding(horizontal = 15.dp, vertical = 15.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -93,8 +93,8 @@ fun myNutrients(carbohydrate:Double, protein:Double, fat:Double, fontSize: Int) 
     Row (
         modifier = Modifier
             .wrapContentHeight()
-            .border(BorderStroke(3.dp, color = Color.Red), CircleShape)
-            .background(Color.LightGray, CircleShape)
+            .border(BorderStroke(3.dp, color = Color.Black))
+            .background(Color(0xFFf8f9fd))
     ){
         Column (
             horizontalAlignment = Alignment.CenterHorizontally,

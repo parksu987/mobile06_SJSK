@@ -42,7 +42,8 @@ fun myPage(person: Person, loginViewModel: LoginViewModel, logout: () -> Unit) {
         )
     else {
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.background(Color(0xFFf3fadc))
         ) {
             Spacer(modifier = spacerModifier)
             profile(person.name, person.age, person.height, person.weight)
