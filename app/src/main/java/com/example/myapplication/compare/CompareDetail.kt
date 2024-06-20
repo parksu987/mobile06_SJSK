@@ -14,7 +14,6 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -40,25 +39,25 @@ import kotlinx.coroutines.launch
 
 data class Product(
     val name: String,
-    val energy: Double,            // 에너지 (kcal)
-    val carbohydrates: Double,     // 탄수화물 (g)
-    val sugars: Double,            // 총당류 (g)
-    val fat: Double,               // 지방 (g)
-    val protein: Double,           // 단백질 (g)
-    val sodium: Double,            // 나트륨 (mg)
-    val saturatedFat: Double,      // 총 포화 지방산 (g)
-    val cholesterol: Double        // 콜레스테롤 (mg)
+    val energy: String,            // 에너지 (kcal)
+    val carbohydrates: String,     // 탄수화물 (g)
+    val sugars: String,            // 총당류 (g)
+    val fat: String,               // 지방 (g)
+    val protein: String,           // 단백질 (g)
+    val sodium: String,            // 나트륨 (mg)
+    val saturatedFat: String,      // 총 포화 지방산 (g)
+    val cholesterol: String        // 콜레스테롤 (mg)
 )
 
 val dailyIntakeStandards = mapOf(
-    "에너지" to 2000.0,
-    "탄수화물" to 324.0,
-    "당류" to 100.0,
-    "단백질" to 55.0,
-    "지방" to 54.0,
-    "포화지방" to 15.0,
-    "나트륨" to 2000.0,
-    "콜레스테롤" to 300.0
+    "에너지" to "2000.0",
+    "탄수화물" to "324.0",
+    "당류" to "100.0",
+    "단백질" to "55.0",
+    "지방" to "54.0",
+    "포화지방" to "15.0",
+    "나트륨" to "2000.0",
+    "콜레스테롤" to "300.0"
 )
 
 @Composable
@@ -228,7 +227,7 @@ fun ProductDescription(product: Product) {
                 Text("1일 영양섭취 기준(%)", fontSize = 13.sp, fontWeight = FontWeight.Bold)
             }
 
-            NutrientInfoRow("에너지", product.energy, "kcal", userInput, applyRecalculation)
+            NutrientInfoRow("에너지", product.energy.toString(), "kcal", userInput, applyRecalculation)
             NutrientInfoRow("탄수화물", product.carbohydrates, "g", userInput, applyRecalculation)
             NutrientInfoRow("총당류", product.sugars, "g", userInput, applyRecalculation)
             NutrientInfoRow("지방", product.fat, "g", userInput, applyRecalculation)
@@ -285,12 +284,12 @@ fun ApplyBadge(onClick: () -> Unit) {
 }
 
 @Composable
-fun NutrientInfoRow(nutrientName: String, amountPer100g: Double, unit: String, userInput: String, applyRecalculation: Boolean) {
+fun NutrientInfoRow(nutrientName: String, amountPer100g: String, unit: String, userInput: String, applyRecalculation: Boolean) {
     var displayedAmount by remember { mutableStateOf(amountPer100g) }
 
     LaunchedEffect(userInput, applyRecalculation) {
         val inputGrams = userInput.toDoubleOrNull() ?: 100.0
-        displayedAmount = amountPer100g * inputGrams / 100
+        displayedAmount = (amountPer100g.toInt() * inputGrams / 100).toString()
     }
 
     Row(
@@ -306,9 +305,9 @@ fun NutrientInfoRow(nutrientName: String, amountPer100g: Double, unit: String, u
 
 
 // Helper function to calculate the percentage of daily intake
-fun calculateDailyPercentage(amount: Double, nutrientName: String): Double {
+fun calculateDailyPercentage(amount: String, nutrientName: String): Double {
     val dailyIntake = dailyIntakeStandards[nutrientName] ?: return 0.0
-    return if (dailyIntake > 0) (amount / dailyIntake) * 100 else 0.0
+    return if (dailyIntake.toDouble() > 0) (amount.toDouble() / dailyIntake.toDouble()) * 100 else 0.0
 }
 
 // Extension function to format doubles

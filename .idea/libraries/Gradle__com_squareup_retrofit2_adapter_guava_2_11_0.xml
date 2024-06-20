@@ -4,7 +4,9 @@
     <CLASSES>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.squareup.retrofit2/adapter-guava/2.11.0/acf4ca64468fa56aa150bee1a8419bee9b6de95f/adapter-guava-2.11.0.jar!/" />
     </CLASSES>
-    <JAVADOC />
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.squareup.retrofit2/adapter-guava/2.11.0/7ef7e601fc3a832f1bf0957fca3aecdbd6aa2562/adapter-guava-2.11.0-javadoc.jar!/" />
+    </JAVADOC>
     <SOURCES>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.squareup.retrofit2/adapter-guava/2.11.0/a28935aaed728008359a50f70e5a2c09b423823a/adapter-guava-2.11.0-sources.jar!/" />
     </SOURCES>

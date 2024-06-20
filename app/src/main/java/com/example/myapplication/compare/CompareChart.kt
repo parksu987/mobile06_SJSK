@@ -19,7 +19,6 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Shapes
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -39,7 +38,7 @@ import com.github.tehras.charts.bar.renderer.bar.SimpleBarDrawer
 import com.github.tehras.charts.bar.renderer.label.SimpleValueDrawer
 import com.github.tehras.charts.bar.renderer.xaxis.SimpleXAxisDrawer
 import com.github.tehras.charts.bar.renderer.yaxis.SimpleYAxisDrawer
-import com.patrykandpatrick.vico.core.common.component.TextComponent
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 @Composable
@@ -108,7 +107,7 @@ fun MultiNutrientBarChart(products: List<Product>, viewModel: ProductViewModel) 
 @Composable
 fun ExpandableNutrientChart(
     products: List<Product>,
-    nutrientSelector: (Product) -> Double,
+    nutrientSelector: (Product) -> String,
     title: String,
     labelMap: Map<Product, String>
 ) {

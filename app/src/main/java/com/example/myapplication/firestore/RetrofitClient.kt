@@ -7,6 +7,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.simplexml.SimpleXmlConverterFactory
+import java.util.concurrent.TimeUnit
 
 
 // API 요청 수행
@@ -19,7 +20,12 @@ object RetrofitClient {
 
     val client = OkHttpClient.Builder()
         .addInterceptor(logging)
+//        .connectTimeout(30, TimeUnit.SECONDS)
+//        .readTimeout(30, TimeUnit.SECONDS)
+//        .writeTimeout(30, TimeUnit.SECONDS)
         .build()
+
+
 
     // Gson 인스턴스에 Lenient 모드를 활성화
     private val gson = GsonBuilder()

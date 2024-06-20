@@ -8,7 +8,6 @@
     <JAVADOC />
     <SOURCES>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/androidx.compose.animation/animation-android/1.7.0-beta02/912612ab97806791bec6838dff5d9fc3e8ffeb42/animation-android-1.7.0-beta02-sources.jar!/" />
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/androidx.compose.animation/animation-android/1.7.0-beta02/46a940d645c056024e279b4de67f3c236e51cff1/animation-1.7.0-beta02-samples-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

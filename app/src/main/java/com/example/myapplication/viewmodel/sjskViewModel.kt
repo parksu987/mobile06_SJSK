@@ -17,10 +17,6 @@ class SjskViewModel : ViewModel() {
     private val _data = MutableStateFlow<ApiResponse?>(null)
     val data = _data.asStateFlow()
 
-//    init {
-//        loadData()  // 예시로 "국밥_돼지머리"를 로드하는 경우
-//    }
-
     private fun loadData(pageNo: Int, foodName: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {

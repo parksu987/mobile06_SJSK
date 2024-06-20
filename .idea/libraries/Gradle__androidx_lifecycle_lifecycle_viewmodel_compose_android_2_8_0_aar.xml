@@ -8,7 +8,6 @@
     <JAVADOC />
     <SOURCES>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/androidx.lifecycle/lifecycle-viewmodel-compose-android/2.8.0/9032ead0949e940ddf53822e73b57053a9bc93d9/lifecycle-viewmodel-compose-android-2.8.0-sources.jar!/" />
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/androidx.lifecycle/lifecycle-viewmodel-compose-android/2.8.0/191230278f5a132d12b0e9aa6b89b72ab83336a2/lifecycle-viewmodel-compose-2.8.0-samples-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

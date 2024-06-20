@@ -99,7 +99,7 @@ fun LoginActivityCompose(navController: NavController, viewModel : LoginViewMode
 //         Handle navigation as a side effect
         LaunchedEffect(loginStatus) {
             if (loginStatus == LoginStatus.SUCCESS) {
-                navController.navigate("MyPage") {
+                navController.navigate("Home") {
                     // Pop up to the start destination of the graph to avoid creating a large stack of destinations
                     popUpTo(navController.graph.startDestinationId) {
                         saveState = true

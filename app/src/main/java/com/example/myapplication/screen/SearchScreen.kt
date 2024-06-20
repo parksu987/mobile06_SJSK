@@ -1,5 +1,9 @@
 package com.example.myapplication.screen
 
+import android.annotation.SuppressLint
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -44,75 +48,115 @@ import com.example.myapplication.firestore.ApiResponse
 import com.example.myapplication.firestore.Item
 import com.example.myapplication.viewmodel.SearchViewModel
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.input.key.Key.Companion.U
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.myapplication.R
+//import org.apache.commons.math3.stat.descriptive.summary.Product
 import kotlin.math.round
 import kotlin.math.roundToInt
+import com.example.myapplication.compare.ProductViewModel
+import com.example.myapplication.compare.Product
+import kotlinx.coroutines.launch
 
 
+fun isInternetAvailable(context: Context): Boolean {
+    val connectivityManager =
+        context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    val activeNetwork = connectivityManager.activeNetwork ?: return false
+    val networkCapabilities = connectivityManager.getNetworkCapabilities(activeNetwork) ?: return false
+    return networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+}
+
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun SearchScreen(viewModel: SearchViewModel, navController: NavHostController) {
+    val productViewModel: ProductViewModel = viewModel()  // ProductViewModel 인스턴스 가져오기
+    val snackbarHostState = remember { SnackbarHostState() }  // Snackbar를 위한 ScaffoldState
+
     var searchText by remember { mutableStateOf("") }
-    var searchClicked by remember { mutableStateOf(false)}
+    var searchClicked by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+
     LaunchedEffect(key1 = Unit) {
         searchClicked = false
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) }
+    ){
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
         ) {
-            OutlinedTextField(
-                value = searchText,
-                onValueChange = {searchText = it},
-                label = { Text("Search Food") },
-                modifier = Modifier
-                    .weight(1f)
-                    .height(IntrinsicSize.Min),
-            )
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            Button(
-                onClick = {
-                            searchClicked = true
-                    viewModel.searchFood(searchText)
-                          },
-                modifier = Modifier.height(IntrinsicSize.Min)
-//                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3F51B5))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.baseline_search_24),
-                    contentDescription = "Search",
-                    tint = Color.White
+                OutlinedTextField(
+                    value = searchText,
+                    onValueChange = {searchText = it},
+                    label = { Text("Search Food") },
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(IntrinsicSize.Min),
                 )
-            }
-        }
 
-        Spacer(modifier = Modifier.height(30.dp))
+                Spacer(modifier = Modifier.width(8.dp))
 
-        val data by viewModel.data.collectAsState()
-        if (searchClicked && data != null ) {
-            Column {
-                DataDisplay(data = data!!, searchText, navController, viewModel)
-                Spacer(modifier = Modifier.height(8.dp))
-                PageIndicator(viewModel)
+                Button(
+                    onClick = {
+                        if (isInternetAvailable(context)) {
+                            searchClicked = true
+                            viewModel.searchFood(searchText)
+                        } else {
+                            coroutineScope.launch {
+                                snackbarHostState.showSnackbar(
+                                    message = "인터넷 연결을 확인해주세요.",
+                                    duration = SnackbarDuration.Short
+                                )
+                            }
+                        }
+                    },
+                    modifier = Modifier.height(IntrinsicSize.Min)
+//                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3F51B5))
+                ) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.baseline_search_24),
+                        contentDescription = "Search",
+                        tint = Color.White
+                    )
+                }
             }
-        } else {
-            Text("No items available")
+
+            Spacer(modifier = Modifier.height(30.dp))
+
+            val data by viewModel.data.collectAsState()
+            if (searchClicked && data != null ) {
+                Column {
+                    DataDisplay(data = data!!, searchText, navController, viewModel, productViewModel, snackbarHostState)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    PageIndicator(viewModel)
+                }
+            } else {
+                Text("No items available")
+            }
         }
     }
+
 }
 
 @Composable
-fun DataDisplay(data: ApiResponse, searchText: String, navController: NavHostController, viewModel: SearchViewModel){
-    // 데이터를 보여주는 간단한 카드 Composable
+fun DataDisplay(data: ApiResponse, searchText: String, navController: NavHostController, viewModel: SearchViewModel, productViewModel: ProductViewModel, snackbarHostState: SnackbarHostState){
+
     if (data.body?.items?.isNotEmpty() == true) {  // 데이터가 있을 때
         LazyColumn {
             item {
@@ -131,6 +175,7 @@ fun DataDisplay(data: ApiResponse, searchText: String, navController: NavHostCon
             data.body?.items?.forEach { items ->
                 items.item?.forEachIndexed { index, item ->
                     item {
+                        var iconTint by remember { mutableStateOf(Color(0xFF326A29)) }
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -159,8 +204,30 @@ fun DataDisplay(data: ApiResponse, searchText: String, navController: NavHostCon
                                     .weight(1f)
                                     .align(Alignment.CenterVertically)
                             )
+                            val coroutineScope = rememberCoroutineScope() // rememberCoroutineScope를 컴포저블 함수 내에 위치시킴
                             IconButton(
-                                onClick = { /*TODO*/ },
+                                onClick = {
+                                    val product = Product(
+                                        name = item.FOOD_NM_KR ?: "", //식품명
+                                        energy = item.AMT_NUM1?: "", //에너지(kcal)
+                                        carbohydrates = item.AMT_NUM6?: "", //탄수화물(g)
+                                        sugars = item.AMT_NUM7?: "", //총당류(g)
+                                        fat = item.AMT_NUM4?: "", //지방(g)
+                                        protein = item.AMT_NUM3?: "", //단백질(g)
+                                        sodium = item.AMT_NUM13?: "", //나트륨(mg)
+                                        saturatedFat = item.AMT_NUM23?: "", //총 포화 지방산(g)
+                                        cholesterol = item.AMT_NUM22?: "", //콜레스테롤(mg)
+                                    )
+                                    productViewModel.addProduct(product)
+                                    iconTint = Color.Gray
+
+                                    coroutineScope.launch {
+                                        snackbarHostState.showSnackbar(
+                                            message = "비교함에 잘 담겼습니다.",
+                                            duration = SnackbarDuration.Short
+                                        )
+                                    }
+                                },
                                 modifier = Modifier
                                     .weight(2f)
                                     .align(Alignment.CenterVertically)
@@ -168,7 +235,7 @@ fun DataDisplay(data: ApiResponse, searchText: String, navController: NavHostCon
                                 Icon(
                                     painter = painterResource(id = R.drawable.baseline_add_shopping_cart_24),
                                     contentDescription = "비교하기",
-                                    tint = Color(0xFF326A29)
+                                    tint = iconTint
                                 )
                             }
                         }
@@ -180,6 +247,7 @@ fun DataDisplay(data: ApiResponse, searchText: String, navController: NavHostCon
         Text("No items available")
     }
 }
+
 
 @Composable
 fun PageIndicator(viewModel: SearchViewModel) {
