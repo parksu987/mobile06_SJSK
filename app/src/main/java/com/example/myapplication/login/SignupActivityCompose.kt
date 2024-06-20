@@ -2,13 +2,17 @@ package com.example.myapplication.login
 
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -56,6 +60,8 @@ fun SignupActivityCompose(navController: NavController, viewModel: LoginViewMode
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        BackButton(navController)
+
         Text("계정 만들기", fontSize = 20.sp, color = Color.Gray,  fontWeight = FontWeight.Bold)
 
         // ID 입력 필드와 중복 확인 버튼
@@ -149,34 +155,21 @@ fun SignupActivityCompose(navController: NavController, viewModel: LoginViewMode
         }
     }
 }
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FormField(label: String, placeholder: String) {
-    Column(modifier = Modifier.padding(vertical = 8.dp)) {
-        Text(label, color = Color.Gray, fontSize = 14.sp)
-        TextField(
-            value = placeholder,
-            onValueChange = {},
-            singleLine = true,
-            readOnly = true,
-            colors = TextFieldDefaults.textFieldColors(Color.Transparent)
+fun BackButton(navController: NavController) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Start,
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { navController.popBackStack() }
+            .padding(16.dp)
+    ) {
+        Icon(
+            imageVector = Icons.Filled.ArrowBack,
+            contentDescription = "뒤로 가기",
+            modifier = Modifier.padding(end = 8.dp)
         )
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun PasswordField(label: String, placeholder: String) {
-    Column(modifier = Modifier.padding(vertical = 8.dp)) {
-        Text(label, color = Color.Gray, fontSize = 14.sp)
-        TextField(
-            value = placeholder,
-            onValueChange = {},
-            visualTransformation = PasswordVisualTransformation(),
-            singleLine = true,
-            readOnly = true,
-            colors = TextFieldDefaults.textFieldColors(Color.Transparent)
-        )
+        Text("뒤로 가기")
     }
 }
