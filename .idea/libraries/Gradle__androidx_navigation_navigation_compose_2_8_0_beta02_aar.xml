@@ -8,6 +8,7 @@
     <JAVADOC />
     <SOURCES>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/androidx.navigation/navigation-compose/2.8.0-beta02/8c46c09511fa0ab7d128d936866e09ed5fd6332d/navigation-compose-2.8.0-beta02-sources.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/androidx.navigation/navigation-compose/2.8.0-beta02/a33e21c92dc06eec60be339be6ea51e98dbaeedc/navigation-compose-2.8.0-beta02-samples-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

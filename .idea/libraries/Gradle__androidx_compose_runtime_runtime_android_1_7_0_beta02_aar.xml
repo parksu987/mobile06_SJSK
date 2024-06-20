@@ -8,6 +8,7 @@
     <JAVADOC />
     <SOURCES>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/androidx.compose.runtime/runtime-android/1.7.0-beta02/be3f2e53f58dd36a2caf5abe0fefcc7df75335f5/runtime-android-1.7.0-beta02-sources.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/androidx.compose.runtime/runtime-android/1.7.0-beta02/d2df3dc588a4a4b55270410d282cf465375a5d7/runtime-1.7.0-beta02-samples-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

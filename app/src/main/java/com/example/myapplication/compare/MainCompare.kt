@@ -15,6 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.myapplication.viewmodel.ProductViewModel
 
 @Composable
 fun MainCompare(viewmodel: ProductViewModel = viewModel()) {
@@ -31,9 +32,9 @@ fun MainCompare(viewmodel: ProductViewModel = viewModel()) {
         }
 
         if (showDetails) {
-            ProductList(products = viewmodel.products, viewModel = viewmodel)
+            ProductList(viewModel = viewmodel)
         } else {
-            MultiNutrientBarChart(products = viewmodel.products, viewModel = viewmodel)
+            MultiNutrientBarChart(viewModel = viewmodel)
         }
     }
 }

@@ -70,7 +70,7 @@ fun myPage(person: Person, loginViewModel: LoginViewModel, logout: () -> Unit) {
                 myPageButton(text = "환경 설정") {}
             }
 
-            logoutButton { }
+            logoutButton {loginViewModel.logout() }
         }
     }
 

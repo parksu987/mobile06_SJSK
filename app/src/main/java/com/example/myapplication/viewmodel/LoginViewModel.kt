@@ -83,18 +83,14 @@ class LoginViewModel(private val repository: LoginRepository): ViewModel() {
     fun updatePersonInfo(id: String, person: Person) {
         repository.updatePersonInfo(id, person)
     }
+
+    fun logout() {
+        _person.value = null
+        _loginStatus.value = null
+    }
 }
 
 enum class LoginStatus {
     SUCCESS,
     FAILURE
 }
-
-
-
-
-
-
-
-
-

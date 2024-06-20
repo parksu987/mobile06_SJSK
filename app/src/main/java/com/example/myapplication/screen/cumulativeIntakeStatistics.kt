@@ -1,5 +1,6 @@
 package com.example.myapplication.screen
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,6 +15,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -23,6 +26,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myapplication.DB.Nutrient
+import com.example.myapplication.DB.Person
+import com.example.myapplication.viewmodel.LoginViewModel
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
@@ -31,25 +36,37 @@ import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoScrollState
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
+import timber.log.Timber
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun cumulativeIntakeStatistics(kcal:Int, carbohydrate:Double, protein:Double, fat:Double, intake:Map<String, Nutrient>, onClick:()->Unit) {
 
     val days = intake.keys.toList()
+    Log.d("누적", "days: ${days.size}")
+
     val CarbohydrateIntakeStatistics = intake.values.map {
-        Log.d("cumulativeIntakeStatistics", "carbohydrate: ${it.carbohydrate}")
+        Log.d("누적", "carbohydrate: ${it.carbohydrate}")
         it.carbohydrate
     }
     val ProteinIntakeStatistics = intake.values.map { it.protein }
     val FatIntakeStatistics = intake.values.map { it.fat }
 
-    Column (
+//    if (days != null) {
+//        for(d in days) {
+//            carbohydrateIntake.add(intake.get(d)?.carbohydrate!!)
+//            proteinIntake.add(intake.get(d)?.protein!!)
+//            fatIntake.add(intake.get(d)?.fat!!)
+//        }
+//    }
+
+
+    Column(
         modifier = Modifier
-            .padding(vertical = 10.dp)
-        ,
+            .padding(vertical = 10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(15.dp),
     ){

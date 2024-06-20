@@ -2,7 +2,6 @@ package com.example.ku
 
 import android.annotation.SuppressLint
 import android.util.Log
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -17,12 +16,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.Nav.BottomNavigationBar
 import com.example.myapplication.Nav.NavigationHost
 import com.example.myapplication.background.SaveWorkManager
+import com.example.myapplication.viewmodel.ProductViewModel
 import com.example.myapplication.firestore.RetrofitClient
 import com.example.myapplication.roomDB.EatingDatabase
 import com.example.myapplication.viewmodel.EatingRepository
@@ -58,6 +56,7 @@ fun MainScreen(navController: NavHostController) {
     val navStoreOwner = rememberViewModelStoreOwner()
     val eatingdb = EatingDatabase.getEatingDatabase(context)
     val eatingViewModel: EatingViewModel = viewModel(factory = EatingViewModelFactory(  EatingRepository(eatingdb)  ) )
+    val productViewModel  = ProductViewModel()
     val db = Firebase.firestore
 
     val searchViewModel: SearchViewModel = viewModel(factory = ViewModelFactory(
@@ -97,7 +96,7 @@ fun MainScreen(navController: NavHostController) {
                 NavigationHost(
                     navController = navController,
                     eatingViewModel = eatingViewModel,
-                    productViewModel = viewModel(),
+                    productViewModel = productViewModel,
                     loginViewModel,
                     searchViewModel
                 )

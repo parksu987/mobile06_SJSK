@@ -17,22 +17,39 @@ class LoginRepository(private val db: FirebaseFirestore) {
         try {
             val dateStr = date.format(DateTimeFormatter.ISO_LOCAL_DATE)
             val userRef = db.collection("users").document("ZXrdvGfY3ZLtJixdUBqD").collection(userId).document(userId)
-            val intakeRef = userRef.collection("intake").document(dateStr)
+//            val intakeRef = userRef.collection("intake").document(dateStr)
+            val intakeRef = userRef.collection("intake")
 
             val userSnapshot = userRef.get().await()
             val intakeSnapshot = intakeRef.get().await()
 
             val person = userSnapshot.toObject(Person::class.java)
-            val intakeData = intakeSnapshot.data as? Map<String, Map<String, Any>>
+            //val intakeData = intakeSnapshot.data as? Map<String, Map<String, Any>>
+            person?.intake = intakeSnapshot.documents.map { document ->
+                val data = document.data
+//                Log.d("로그인", "id:${document.id} intakeData: $data")
+                val nut = data?.get("${document.id}") as? Map<String, Any>
+
+                val nutrient = Nutrient(
+                    carbohydrate = nut?.get("carbohydrate") as? Double ?: 0.0,
+                    protein = nut?.get("protein") as? Double ?: 0.0,
+                    fat = nut?.get("fat") as? Double ?: 0.0,
+                )
+                Log.d("로그인", "id:${document.id} intakeData: $nutrient")
+                document.id to nutrient
+            }.toMap()
 
             // Convert Map<String, Any> to Map<String, Nutrient>
-            person?.intake = intakeData?.mapValues { (_, value) ->
-                Nutrient(
-                carbohydrate = value["carbohydrate"] as? Double ?: 0.0,
-                protein = value["protein"] as? Double ?: 0.0,
-                fat = value["fat"] as? Double ?: 0.0
-                )
-            } ?: mapOf()
+//            person?.intake = intakeData?.mapValues { (_, value) ->
+//                Log.d("로그인", "intakeData: $value")
+//
+//                Nutrient(
+//                    carbohydrate = value["carbohydrate"] as? Double ?: 0.0,
+//                    protein = value["protein"] as? Double ?: 0.0,
+//                    fat = value["fat"] as? Double ?: 0.0
+//                )
+//            } ?: mapOf()
+
 
             if (person != null && person.pw == password) {
                 Log.d("로그인", "성공")
